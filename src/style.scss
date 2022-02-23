@@ -19,6 +19,20 @@
   --rounded-sm: 0.25rem;
 
   --outline: 0.125rem solid var(--c-accent);
+
+  @media (prefers-color-scheme: dark) {
+    --c-fg: #f4f7fa;
+    --c-bg: #171923;
+    --c-bg-alt: #20222c;
+    --c-input: #4d5266;
+    --c-input-alt: #2b2e3b;
+    --c-label: #8f96ac;
+  }
+}
+
+::selection {
+  background: var(--c-label);
+  color: var(--c-bg);
 }
 
 * {
@@ -63,7 +77,6 @@ textarea {
 button,
 select {
   cursor: pointer;
-  user-select: none;
 }
 
 .input {

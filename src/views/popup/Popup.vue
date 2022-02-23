@@ -118,8 +118,10 @@ main {
   border-radius: var(--rounded-sm);
   font-size: 0.8125rem;
   text-transform: capitalize;
+  user-select: none;
 
   option {
+    background: var(--c-bg-alt);
     color: var(--c-fg);
   }
 }
