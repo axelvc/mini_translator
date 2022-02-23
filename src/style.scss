@@ -1,0 +1,76 @@
+:root {
+  // [c]olor
+  --c-fg: #29303d;
+  --c-bg: #f4f6fb;
+  --c-bg-alt: #ffffff;
+  --c-accent: #4488ff;
+  --c-input: #a3b1cc;
+  --c-input-alt: #dfe3ed;
+  --c-label: #59667f;
+
+  // [s]pace
+  --s-xl: 2rem;
+  --s-lg: 1.5rem;
+  --s-md: 1rem;
+  --s-sm: 0.5rem;
+  --s-xs: 0.25rem;
+
+  --rounded: 0.5rem;
+  --rounded-sm: 0.25rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  &:focus-visible,
+  .outline {
+    outline: 0.125rem solid var(--c-accent);
+  }
+
+  &:focus-visible.no-outline {
+    outline: none;
+  }
+}
+
+body {
+  color: var(--c-fg);
+  background: var(--c-bg);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  color: inherit;
+  background: none;
+  border: none;
+  font: inherit;
+}
+
+input,
+textarea {
+  &::placeholder {
+    color: var(--c-input);
+    user-select: none;
+  }
+}
+
+button,
+select {
+  cursor: pointer;
+  user-select: none;
+}
+
+.input {
+  background: var(--c-bg-alt);
+  border: 1px solid var(--c-input-alt);
+  border-radius: var(--rounded);
+}
+
+.icon {
+  height: 1em;
+  width: 1em;
+}
