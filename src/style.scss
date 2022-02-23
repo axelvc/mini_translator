@@ -17,6 +17,8 @@
 
   --rounded: 0.5rem;
   --rounded-sm: 0.25rem;
+
+  --outline: 0.125rem solid var(--c-accent);
 }
 
 * {
@@ -26,7 +28,7 @@
 
   &:focus-visible,
   .outline {
-    outline: 0.125rem solid var(--c-accent);
+    outline: var(--outline);
   }
 
   &:focus-visible.no-outline {
