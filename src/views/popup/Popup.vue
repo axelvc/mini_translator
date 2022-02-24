@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { debouncedWatch } from '@vueuse/core'
+import { debouncedWatch, useClipboard } from '@vueuse/core'
 import ClipboardIcon from '../../components/icons/ClipboardIcon.svg'
 import SettingsIcon from '../../components/icons/SettingsIcon.svg'
 import VolumeIcon from '../../components/icons/VolumeIcon.svg'
-import { translate, Response } from '../../utils/translate'
+import { listen, translate, Response } from '../../utils'
 
 const inputFocus = ref(false)
+const { copy } = useClipboard()
 
 const input = ref('')
 const output = ref<Response>({ trans: '' })
+
+// TODO: use selected languages
+const langs = {
+  input: 'en',
+  output: 'es',
+}
 
 debouncedWatch(
   input,
@@ -19,7 +26,7 @@ debouncedWatch(
       return
     }
 
-    output.value = await translate(input, 'en', 'es') // TODO: use selected languages
+    output.value = await translate(input, langs.input, langs.output)
   },
   { debounce: 500 },
 )
@@ -61,10 +68,10 @@ const LANG_LIST = [
           <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
         </select>
 
-        <button :class="s.btn" title="Copy to clipboard">
+        <button :class="s.btn" title="Copy to clipboard" @click="copy(input)">
           <ClipboardIcon class="icon" />
         </button>
-        <button :class="s.btn" title="Listen ">
+        <button :class="s.btn" title="Listen" @click="listen(input, langs.input)">
           <VolumeIcon class="icon" />
         </button>
       </div>
@@ -76,10 +83,10 @@ const LANG_LIST = [
           <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
         </select>
 
-        <button :class="s.btn" title="Copy to clipboard">
+        <button :class="s.btn" title="Copy to clipboard" @click="copy(output.trans)">
           <ClipboardIcon class="icon" />
         </button>
-        <button :class="s.btn" title="Listen ">
+        <button :class="s.btn" title="Listen" @click="listen(output.trans, langs.output)">
           <VolumeIcon class="icon" />
         </button>
       </div>
