@@ -1,10 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { debouncedWatch } from '@vueuse/core'
 import ClipboardIcon from '../../components/icons/ClipboardIcon.svg'
 import SettingsIcon from '../../components/icons/SettingsIcon.svg'
 import VolumeIcon from '../../components/icons/VolumeIcon.svg'
+import { translate, Response } from '../../utils/translate'
 
 const inputFocus = ref(false)
+
+const input = ref('')
+const output = ref<Response>({ trans: '' })
+
+debouncedWatch(
+  input,
+  async input => {
+    if (!input) {
+      output.value = { trans: '' }
+      return
+    }
+
+    output.value = await translate(input, 'en', 'es') // TODO: use selected languages
+  },
+  { debounce: 500 },
+)
 
 // TODO: remove
 const LANG_LIST = [
@@ -30,6 +48,7 @@ const LANG_LIST = [
   <main>
     <div :class="['input', inputFocus && 'outline', s.input]">
       <textarea
+        v-model="input"
         :class="['no-outline', s.text]"
         placeholder="Type something"
         autofocus
@@ -51,7 +70,7 @@ const LANG_LIST = [
       </div>
     </div>
 
-    <div :class="s.output">
+    <div v-if="output.trans" :class="s.output">
       <div :class="s.actions">
         <select :class="s.lang" title="language" value="spanish">
           <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
@@ -65,7 +84,14 @@ const LANG_LIST = [
         </button>
       </div>
 
-      <p :class="s.text">Texto de ejemplo</p>
+      <p :class="s.text">{{ output.trans }}</p>
+
+      <div v-if="output.dict?.length" :class="s.dict">
+        <template v-for="{ pos, terms } in output.dict" :key="pos">
+          <span :class="s.pos">{{ pos }}:</span>
+          <span>{{ terms.join(', ') }}</span>
+        </template>
+      </div>
     </div>
 
     <nav :class="s.nav">
@@ -150,6 +176,20 @@ main {
 .output {
   @extend %box;
   flex-direction: column;
+  min-height: 4rem;
+}
+
+.dict {
+  display: grid;
+  gap: var(--s-xs) var(--s-md);
+  grid-template-columns: auto 1fr;
+  margin: var(--s-xs);
+  color: var(--c-label);
+  font-size: 0.875rem;
+
+  .pos {
+    font-weight: 600;
+  }
 }
 
 /* ----------------------------------- nav ---------------------------------- */
