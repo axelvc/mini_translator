@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { debouncedWatch, useClipboard } from '@vueuse/core'
+import * as browser from 'webextension-polyfill'
+import { getOption } from '../../settings'
+import { listen, translate, Response } from '../../utils'
 import ClipboardIcon from '../../components/icons/ClipboardIcon.svg'
 import SettingsIcon from '../../components/icons/SettingsIcon.svg'
 import VolumeIcon from '../../components/icons/VolumeIcon.svg'
-import { listen, translate, Response } from '../../utils'
 
 const inputFocus = ref(false)
 const { copy } = useClipboard()
@@ -12,43 +14,41 @@ const { copy } = useClipboard()
 const input = ref('')
 const output = ref<Response>({ trans: '' })
 
-// TODO: use selected languages
-const langs = {
-  input: 'en',
-  output: 'es',
+const langs = reactive({ input: '', output: '' })
+getOption('main_language').then(v => (langs.input = v))
+getOption('second_language').then(v => (langs.output = v))
+
+async function getTranslation() {
+  output.value = await translate(input.value, langs.input, langs.output)
 }
 
-debouncedWatch(
-  input,
-  async input => {
-    if (!input) {
-      output.value = { trans: '' }
-      return
-    }
+getOption('delay').then(delay => {
+  debouncedWatch(
+    input,
+    async input => {
+      if (!input) {
+        output.value = { trans: '' }
+        return
+      }
 
-    output.value = await translate(input, langs.input, langs.output)
-  },
-  { debounce: 500 },
-)
+      await getTranslation()
+    },
+    { debounce: delay },
+  )
+})
+
+watch(langs, async () => {
+  if (!input.value) return
+
+  await getTranslation()
+})
 
 // TODO: remove
-const LANG_LIST = [
-  'czech',
-  'danish',
-  'dutch',
-  'english',
-  'finnish',
-  'freanch',
-  'german',
-  'italian',
-  'norwegian',
-  'polish',
-  'portuguese',
-  'russian',
-  'spanish',
-  'swedish',
-  'turkish',
-]
+const LANG_LIST = ['en', 'es', 'fr', 'it', 'nl', 'pt', 'ru']
+
+function openSettings() {
+  browser.runtime.openOptionsPage()
+}
 </script>
 
 <template>
@@ -64,7 +64,7 @@ const LANG_LIST = [
       />
 
       <div :class="s.actions">
-        <select :class="s.lang" title="language" value="english">
+        <select v-model="langs.input" :class="s.lang" title="Language">
           <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
         </select>
 
@@ -79,7 +79,7 @@ const LANG_LIST = [
 
     <div v-if="output.trans" :class="s.output">
       <div :class="s.actions">
-        <select :class="s.lang" title="language" value="spanish">
+        <select v-model="langs.output" :class="s.lang" title="Language">
           <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
         </select>
 
@@ -102,7 +102,7 @@ const LANG_LIST = [
     </div>
 
     <nav :class="s.nav">
-      <button :class="s.btn" title="Settings">
+      <button :class="s.btn" title="Settings" @click="openSettings">
         <SettingsIcon class="icon" />
       </button>
     </nav>
