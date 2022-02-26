@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+const p = defineProps({
+  modelValue: Boolean,
+})
 
-const active = ref(false)
+const emit = defineEmits<{
+  (e: 'update:modelValue', v: boolean): void
+}>()
 </script>
 
 <template>
@@ -9,8 +13,8 @@ const active = ref(false)
     ref="input"
     type="checkbox"
     :class="s.input"
-    @focus="active = true"
-    @blur="active = false"
+    :checked="p.modelValue"
+    @change="emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
   />
 
   <span :class="s.switch">

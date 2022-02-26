@@ -1,138 +1,51 @@
 <script setup lang="ts">
+import { reactive, ref, watch } from 'vue'
 import VSelect from '../../components/VSelect.vue'
 import VSwitch from '../../components/VSwitch.vue'
-</script>
+import { settingSchema, setupSettings, saveSettings } from '../../settings'
 
+const loading = ref(true)
+const settings = reactive<Record<string, any>>({})
+
+setupSettings().then(s => {
+  loading.value = false
+  Object.assign(settings, s)
+})
+
+watch(settings, saveSettings)
+</script>
 <template>
   <main>
     <h1>Options</h1>
 
-    <section>
-      <h2>General</h2>
-      <ul class="list">
-        <li>
-          <label class="option">
-            <span class="name">First language</span>
-            <VSelect :options="['option 1', 'option 2', 'option 3']" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Second language</span>
-            <VSelect :options="['option 1', 'option 2', 'option 3']" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Theme</span>
-            <VSelect :options="['option 1', 'option 2', 'option 3']" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Font size</span>
-            <VSelect :options="['option 1', 'option 2', 'option 3']" />
-          </label>
-        </li>
-      </ul>
-    </section>
+    <template v-if="!loading">
+      <section v-for="category in settingSchema" :key="category.id">
+        <h2>{{ category.name }}</h2>
 
-    <section>
-      <h2>Toolbar translation</h2>
-      <ul class="list">
-        <li>
-          <label class="option">
-            <span class="name">Waiting time to translate</span>
-            <input class="input" type="number" placeholder="500" />
-          </label>
-        </li>
-      </ul>
-    </section>
+        <ul class="list">
+          <li v-for="option in category.children" :key="option.id" class="option">
+            <label :class="[option.type === 'boolean' && 'inline']">
+              <span class="name">{{ option.label }}</span>
 
-    <section>
-      <h2>Floating translation</h2>
-      <ul class="list">
-        <li>
-          <label class="option">
-            <span class="name">Mode</span>
-            <VSelect :options="['option 1', 'option 2', 'option 3']" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Position</span>
-            <VSelect :options="['option 1', 'option 2', 'option 3']" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Offset</span>
-            <input class="input" type="number" placeholder="10" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Max width</span>
-            <input class="input" type="number" placeholder="full" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Max height</span>
-            <input class="input" type="number" placeholder="full" />
-          </label>
-        </li>
-        <li>
-          <label class="option inline">
-            <span class="name">Hide in my languages</span>
-            <VSwitch />
-          </label>
-        </li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Context menu options</h2>
-      <ul class="list">
-        <li>
-          <label class="option inline">
-            <span class="name">Translate this page</span>
-            <VSwitch />
-          </label>
-        </li>
-        <li>
-          <label class="option inline">
-            <span class="name">Translate selected text</span>
-            <VSwitch />
-          </label>
-        </li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Exclusion</h2>
-      <ul class="list">
-        <li>
-          <label class="option">
-            <span class="name">Languages</span>
-            <input class="input" type="text" />
-          </label>
-        </li>
-        <li>
-          <label class="option">
-            <span class="name">Pages</span>
-            <textarea class="input" />
-          </label>
-        </li>
-
-        <li>
-          <label class="option">
-            <span class="name">First language</span>
-            <VSelect :options="['option 1', 'option 2', 'option 3']" />
-          </label>
-        </li>
-      </ul>
-    </section>
+              <VSwitch v-if="option.type === 'boolean'" v-model="settings[option.id]" />
+              <VSelect
+                v-else-if="option.type === 'select'"
+                v-model="settings[option.id]"
+                :options="option.options"
+              />
+              <input
+                v-else-if="option.type === 'number'"
+                v-model="settings[option.id]"
+                type="number"
+                class="input"
+              />
+              <textarea v-else-if="option.multiline" v-model="settings[option.id]" class="input" />
+              <input v-else v-model="settings[option.id]" type="text" class="input" />
+            </label>
+          </li>
+        </ul>
+      </section>
+    </template>
   </main>
 </template>
 
@@ -147,10 +60,12 @@ main {
 
 h1 {
   font-size: 3rem;
+  text-transform: capitalize;
 }
 
 h2 {
   font-size: 1.5rem;
+  text-transform: capitalize;
 }
 
 input[type='number'] {
@@ -200,15 +115,17 @@ section {
 }
 
 .option {
-  display: grid;
-  gap: var(--s-xs);
-
-  &.inline {
-    display: flex;
+  label {
+    display: grid;
     gap: var(--s-xs);
-    align-items: center;
-    justify-content: space-between;
-    height: 2.5rem;
+
+    &.inline {
+      display: flex;
+      gap: var(--s-xs);
+      align-items: center;
+      justify-content: space-between;
+      height: 2.5rem;
+    }
   }
 
   .name {

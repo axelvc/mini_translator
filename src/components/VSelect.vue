@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { defineProps, type PropType } from 'vue'
+import { type PropType } from 'vue'
 import ChevronDownIcon from './icons/ChevronDownIcon.svg'
 
 const p = defineProps({
+  modelValue: {
+    type: String,
+    default: '',
+  },
   options: {
     type: Array as PropType<string[]>,
     required: true,
@@ -12,11 +16,19 @@ const p = defineProps({
     default: '',
   },
 })
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', v: string): void
+}>()
 </script>
 
 <template>
   <span ref="container" :class="s.container">
-    <select class="input">
+    <select
+      class="input"
+      :value="p.modelValue"
+      @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
+    >
       <option v-for="option in p.options" :key="option" :value="option">{{ option }}</option>
     </select>
 
