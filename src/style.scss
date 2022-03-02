@@ -1,5 +1,4 @@
-:root {
-  // [c]olor
+@mixin light-theme {
   --c-fg: #29303d;
   --c-bg: #f4f6fb;
   --c-bg-alt: #ffffff;
@@ -7,7 +6,18 @@
   --c-input: #a3b1cc;
   --c-input-alt: #dfe3ed;
   --c-label: #59667f;
+}
 
+@mixin dark-theme {
+  --c-fg: #f4f7fa;
+  --c-bg: #171923;
+  --c-bg-alt: #20222c;
+  --c-input: #4d5266;
+  --c-input-alt: #2b2e3b;
+  --c-label: #8f96ac;
+}
+
+:root {
   // [s]pace
   --s-xl: 2rem;
   --s-lg: 1.5rem;
@@ -20,13 +30,18 @@
 
   --outline: 0.125rem solid var(--c-accent);
 
+  @include light-theme;
+
   @media (prefers-color-scheme: dark) {
-    --c-fg: #f4f7fa;
-    --c-bg: #171923;
-    --c-bg-alt: #20222c;
-    --c-input: #4d5266;
-    --c-input-alt: #2b2e3b;
-    --c-label: #8f96ac;
+    @include dark-theme;
+  }
+
+  &[data-theme='light'] {
+    @include light-theme;
+  }
+
+  &[data-theme='dark'] {
+    @include dark-theme;
   }
 }
 

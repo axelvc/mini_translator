@@ -42,4 +42,10 @@ export async function setOption(key: string, value: any) {
   await saveSettings()
 }
 
+export async function listenOption(key: string, cb: (value: any) => void) {
+  browser.storage.onChanged.addListener(({ settings }) => {
+    cb(settings.newValue[key])
+  })
+}
+
 export { settingSchema }
