@@ -22,7 +22,7 @@ async function getTranslation() {
   output.value = await translate(input.value, langs.input, langs.output)
 }
 
-getOption('delay').then(delay => {
+getOption('toolbar_delay').then(delay => {
   debouncedWatch(
     input,
     async input => {

@@ -2,10 +2,10 @@
 import { reactive, ref, watch } from 'vue'
 import VSelect from '@/components/VSelect.vue'
 import VSwitch from '@/components/VSwitch.vue'
-import { settingSchema, setupSettings, saveSettings } from '@/settings'
+import { settingSchema, setupSettings, saveSettings, Settings } from '@/settings'
 
 const loading = ref(true)
-const settings = reactive<Record<string, any>>({})
+const settings = reactive<Settings>({} as Settings)
 
 setupSettings().then(s => {
   loading.value = false

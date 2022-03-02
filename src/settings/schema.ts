@@ -1,5 +1,18 @@
+export type OptionId =
+  | 'main_language'
+  | 'second_language'
+  | 'theme'
+  | 'toolbar_delay'
+  | 'floating_enabled'
+  | 'floating_omit_main'
+  | 'floating_position'
+  | 'floating_max_width'
+  | 'floating_max_height'
+  | 'context_translate_page'
+  | 'context_translate_selection'
+
 interface OptionBase<T, K = string> {
-  id: string
+  id: OptionId
   type: K
   label: string
   defaultValue: T
@@ -27,12 +40,10 @@ interface Category {
   children: (OptionBoolean | OptionNumber | OptionSelect | OptionText)[]
 }
 
-type Settings = Category[]
-
 // TODO: use real list
 const langs = ['en', 'es', 'fr', 'it', 'ja', 'ko', 'pt', 'ru', 'zh']
 
-const schema: Readonly<Settings> = [
+const schema: Category[] = [
   {
     id: 'general',
     name: 'General',
@@ -43,7 +54,7 @@ const schema: Readonly<Settings> = [
         label: 'Main language',
         defaultValue: 'en',
         options: langs,
-        description: 'Langauge who wil be used to any translation',
+        description: 'Language used to all translations',
       },
       {
         id: 'second_language',
@@ -51,27 +62,14 @@ const schema: Readonly<Settings> = [
         label: 'Second language',
         defaultValue: 'es',
         options: langs,
-        description: 'Language who will be used if the input is same as main language',
+        description: 'Language used if the input is same as main language',
       },
-    ],
-  },
-  {
-    id: 'appearence',
-    name: 'Appearence',
-    children: [
       {
         id: 'theme',
         type: 'select',
         label: 'Theme',
         defaultValue: 'system',
         options: ['light', 'dark', 'system'],
-      },
-      {
-        id: 'font_size',
-        type: 'select',
-        label: 'Font size',
-        defaultValue: 'normal',
-        options: ['small', 'normal', 'large'],
       },
     ],
   },
@@ -80,7 +78,7 @@ const schema: Readonly<Settings> = [
     name: 'Toolbar translation',
     children: [
       {
-        id: 'delay',
+        id: 'toolbar_delay',
         type: 'number',
         label: 'Waiting time to translate (ms)',
         defaultValue: 500,
@@ -93,33 +91,33 @@ const schema: Readonly<Settings> = [
     name: 'Floating translation',
     children: [
       {
-        id: 'enabled',
+        id: 'floating_enabled',
         type: 'boolean',
-        label: 'Enable',
+        label: 'Enabled',
         defaultValue: true,
       },
       {
-        id: 'omit_main',
+        id: 'floating_omit_main',
         type: 'boolean',
-        label: 'Omit to translate main language',
+        label: 'Omit in main language',
         defaultValue: true,
       },
       {
-        id: 'position',
+        id: 'floating_position',
         type: 'select',
         label: 'Position',
         defaultValue: 'bottom',
         options: ['top', 'bottom', 'left', 'right'],
       },
       {
-        id: 'max_width',
+        id: 'floating_max_width',
         type: 'number',
         label: 'Max Width (px)',
         defaultValue: 300,
         min: 0,
       },
       {
-        id: 'max_height',
+        id: 'floating_max_height',
         type: 'number',
         label: 'Max Height (px)',
         defaultValue: 300,
@@ -132,35 +130,16 @@ const schema: Readonly<Settings> = [
     name: 'Context menu',
     children: [
       {
-        id: 'translate_page',
+        id: 'context_translate_page',
         type: 'boolean',
         label: 'Translate this page',
         defaultValue: true,
       },
       {
-        id: 'translate_selection',
+        id: 'context_translate_selection',
         type: 'boolean',
         label: 'Translate selection',
         defaultValue: true,
-      },
-    ],
-  },
-  {
-    id: 'disable',
-    name: 'Disable',
-    children: [
-      {
-        id: 'languages',
-        type: 'text',
-        label: 'Disable languages',
-        defaultValue: '',
-      },
-      {
-        id: 'pages',
-        type: 'text',
-        label: 'Disable Pages',
-        defaultValue: '',
-        multiline: true,
       },
     ],
   },

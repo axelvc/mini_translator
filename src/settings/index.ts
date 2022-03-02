@@ -1,7 +1,9 @@
-import settingSchema from './schema'
+import settingSchema, { type OptionId } from './schema'
 import * as browser from 'webextension-polyfill'
 
-let settings: Record<string, any> = {}
+export type Settings = Record<OptionId, any>
+
+let settings = {} as Settings
 
 export async function saveSettings(s = settings) {
   await browser.storage.local.set({ settings: s })
@@ -28,21 +30,21 @@ export async function setupSettings() {
   return settings
 }
 
-export async function getOption<T = any>(key: string): Promise<T> {
+export async function getOption(key: OptionId): Promise<any> {
   if (!Object.hasOwn(settings, key)) {
     await setupSettings()
   }
 
-  return settings[key] as T
+  return settings[key]
 }
 
-export async function setOption(key: string, value: any) {
+export async function setOption(key: OptionId, value: any) {
   settings[key] = value
 
   await saveSettings()
 }
 
-export async function listenOption(key: string, cb: (value: any) => void) {
+export async function listenOption(key: OptionId, cb: (value: any) => void) {
   browser.storage.onChanged.addListener(({ settings }) => {
     cb(settings.newValue[key])
   })
