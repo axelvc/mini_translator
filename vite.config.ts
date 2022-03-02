@@ -14,6 +14,11 @@ if (isDev) {
 export default defineConfig({
   root,
   publicDir,
+  resolve: {
+    alias: {
+      '@': root,
+    },
+  },
   plugins: [
     vue(),
     svgLoader({

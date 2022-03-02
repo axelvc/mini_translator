@@ -2,11 +2,11 @@
 import { ref, reactive, watch } from 'vue'
 import { debouncedWatch, useClipboard } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
-import { getOption } from '../../settings'
-import { listen, translate, Response } from '../../utils'
-import ClipboardIcon from '../../components/icons/ClipboardIcon.svg'
-import SettingsIcon from '../../components/icons/SettingsIcon.svg'
-import VolumeIcon from '../../components/icons/VolumeIcon.svg'
+import { getOption } from '@/settings'
+import { listen, translate, Response } from '@/utils'
+import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
+import SettingsIcon from '@/components/icons/SettingsIcon.svg'
+import VolumeIcon from '@/components/icons/VolumeIcon.svg'
 
 const inputFocus = ref(false)
 const { copy } = useClipboard()

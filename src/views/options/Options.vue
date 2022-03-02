@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-import VSelect from '../../components/VSelect.vue'
-import VSwitch from '../../components/VSwitch.vue'
-import { settingSchema, setupSettings, saveSettings } from '../../settings'
+import VSelect from '@/components/VSelect.vue'
+import VSwitch from '@/components/VSwitch.vue'
+import { settingSchema, setupSettings, saveSettings } from '@/settings'
 
 const loading = ref(true)
 const settings = reactive<Record<string, any>>({})
