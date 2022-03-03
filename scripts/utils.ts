@@ -9,6 +9,8 @@ export const publicDir = resolve(__dirname, '../public')
 export const views = {
   popup: 'views/popup/index.html',
   options: 'views/options/index.html',
+  background: 'views/background/index.html',
+  contentScripts: 'views/contentScripts/main.ts',
 }
 
 export const capitalize = (s: string) => s[0].toUpperCase() + s.slice(1)

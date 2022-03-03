@@ -24,7 +24,10 @@ export default async function makeManifest() {
       page: views.options,
       open_in_tab: true,
     },
-    permissions: ['storage', 'https://*/'],
+    background: {
+      page: views.background,
+    },
+    permissions: ['storage', 'webNavigation', '*://*/'],
   }
 
   if (isDev) {
