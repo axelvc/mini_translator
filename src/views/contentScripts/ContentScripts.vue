@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { watchOnce } from '@vueuse/core'
+import { watchOnce, useClipboard } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, type ReferenceElement } from '@floating-ui/dom'
+import { type Response } from '@/utils'
+import { getOption } from '@/settings'
 import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
 
@@ -26,7 +28,6 @@ const translationBox = ref<HTMLDivElement>()
 
 const offsetSpace = 10
 const iconUrl = browser.runtime.getURL('icons/icon.svg')
-const showTranslation = ref(false)
 
 /* -------------------------- update boxes position ------------------------- */
 async function updateBoxPosition(reference: ReferenceElement, box: HTMLElement) {
@@ -61,30 +62,70 @@ watchOnce(translationBox, box => {
 
   updateBoxPosition(selectionRange, box!)
 })
+
+/* ------------------------------- translation ------------------------------ */
+// output language
+const LANG_LIST = ['en', 'es', 'fr', 'it', 'nl', 'pt', 'ru'] // TODO: remove
+const outputLang = ref('')
+getOption('main_language').then(v => (outputLang.value = v))
+
+// translation
+const translation = ref<Response>({ trans: '' })
+
+async function getTranslation() {
+  const res: Response = await browser.runtime.sendMessage({
+    type: 'translate',
+    data: {
+      text: p.selectedText,
+      from: 'auto',
+      to: outputLang.value,
+    },
+  })
+
+  translation.value = res
+}
+
+// listen
+async function listen() {
+  browser.runtime.sendMessage({
+    type: 'listen',
+    data: {
+      text: p.selectedText,
+      lang: outputLang.value,
+    },
+  })
+}
+
+// clipboard
+const { copy } = useClipboard()
+
+function copyOutput() {
+  copy(translation.value.trans)
+}
 </script>
 
 <template>
-  <div v-if="showTranslation" ref="translationBox" :class="s.translation">
+  <div v-if="translation.trans" ref="translationBox" :class="s.translation">
     <div :class="s.actions">
-      <select value="Spanish" :class="s.lang" title="Language">
-        <option v-for="lang in ['Spanish', 'English', 'Italian']" :key="lang">{{ lang }}</option>
+      <select v-model="outputLang" :class="s.lang" title="Language">
+        <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
       </select>
 
-      <button :class="s.btn" title="Copy to clipboard">
+      <button :class="s.btn" title="Copy to clipboard" @click="copyOutput">
         <ClipboardIcon class="icon" />
       </button>
-      <button :class="s.btn" title="Listen">
+      <button :class="s.btn" title="Listen" @click="listen">
         <VolumeIcon class="icon" />
       </button>
     </div>
 
-    <p :class="s.text">{{ selectedText }}</p>
+    <p :class="s.text">{{ translation.trans }}</p>
 
-    <div :class="s.dict">
-      <span :class="s.pos">verb:</span>
-      <span>probar, tomar una muestra, catar</span>
-      <span :class="s.pos">noun:</span>
-      <span>muestra, espécimen</span>
+    <div v-if="translation.dict" :class="s.dict">
+      <template v-for="{ pos, terms } in translation.dict" :key="pos">
+        <span :class="s.pos">{{ pos }}:</span>
+        <span>{{ terms.join(', ') }}</span>
+      </template>
     </div>
   </div>
 
@@ -95,7 +136,7 @@ watchOnce(translationBox, box => {
     :class="s.tooltip"
     width="0"
     height="0"
-    @click="showTranslation = true"
+    @click="getTranslation"
   />
 </template>
 
@@ -105,6 +146,7 @@ watchOnce(translationBox, box => {
 
 <style lang="scss" module="s">
 %container {
+  z-index: 99;
   position: absolute;
   display: flex;
   border: 1px solid var(--c-bg-alt);

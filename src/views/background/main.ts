@@ -1,4 +1,5 @@
 import * as browser from 'webextension-polyfill'
+import { listen, translate } from '@/utils'
 
 browser.webNavigation.onCommitted.addListener(({ tabId, frameId }) => {
   if (frameId !== 0) return
@@ -7,4 +8,13 @@ browser.webNavigation.onCommitted.addListener(({ tabId, frameId }) => {
     file: './contentScripts.js',
     runAt: 'document_end',
   })
+})
+
+browser.runtime.onMessage.addListener(async ({ type, data }) => {
+  switch (type) {
+    case 'translate':
+      return await translate(data.text, data.from, data.to)
+    case 'listen':
+      listen(data.text, data.lang)
+  }
 })
