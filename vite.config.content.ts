@@ -11,6 +11,7 @@ export default defineConfig({
     outDir,
     emptyOutDir: false,
     watch: isDev ? {} : null,
+    sourcemap: 'inline',
     lib: {
       entry: resolve(root, views.contentScripts),
       name: pkg.name,
@@ -19,6 +20,7 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
+        assetFileNames: 'contentScripts[extname]',
         entryFileNames: 'contentScripts.js',
       },
     },
