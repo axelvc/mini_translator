@@ -1,6 +1,7 @@
 import * as browser from 'webextension-polyfill'
 import { App, createApp } from 'vue'
 import ContentScripts from './ContentScripts.vue'
+import { sleep } from '@/utils'
 
 /* ---------------------------------- setup --------------------------------- */
 const container = document.createElement('div')
@@ -30,20 +31,20 @@ function mount(selectedText: string, x: number, y: number) {
 }
 
 function unmount() {
-  getSelection()?.removeAllRanges()
   app?.unmount()
   container.remove()
 
   app = null
 }
 
-document.addEventListener('mouseup', ev => {
-  const isOutside = !container.contains(ev.target as HTMLElement)
-  const selectedText = getSelection()?.toString().trim()
+document.addEventListener('mouseup', async ev => {
+  await sleep()
 
-  if (app) {
-    isOutside && unmount()
-  } else {
-    selectedText && mount(selectedText, ev.x, ev.y)
-  }
+  const isInside = container.contains(ev.target as HTMLElement)
+  if (isInside) return
+
+  unmount()
+
+  const selectedText = getSelection()?.toString().trim()
+  if (selectedText) mount(selectedText, ev.x, ev.y)
 })
