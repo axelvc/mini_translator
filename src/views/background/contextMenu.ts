@@ -1,7 +1,8 @@
 import * as browser from 'webextension-polyfill'
 import { getOption, listenOption } from '@/settings'
+import { OptionId } from '@/settings/schema'
 
-const idPage = 'context_translate_page'
+const idPage: OptionId = 'context_enabled'
 
 async function getLangs(tab: browser.Tabs.Tab): Promise<{ to: string; from: string }> {
   const langs = {
