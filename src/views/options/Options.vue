@@ -2,12 +2,12 @@
 import { reactive, ref, watch } from 'vue'
 import VSelect from '@/components/VSelect.vue'
 import VSwitch from '@/components/VSwitch.vue'
-import { settingSchema, setupSettings, saveSettings, Settings } from '@/settings'
+import { settingSchema, getSettings, saveSettings, Settings } from '@/settings'
 
 const loading = ref(true)
 const settings = reactive<Settings>({} as Settings)
 
-setupSettings().then(s => {
+getSettings().then(s => {
   loading.value = false
   Object.assign(settings, s)
 })
