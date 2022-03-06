@@ -28,7 +28,7 @@ export default async function makeManifest() {
       page: views.background,
     },
     web_accessible_resources: ['contentScripts.css', 'icons/*'],
-    permissions: ['storage', 'webNavigation', '*://*/'],
+    permissions: ['storage', 'webNavigation', 'contextMenus', '*://*/'],
   }
 
   if (isDev) {

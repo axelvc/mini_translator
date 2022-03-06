@@ -1,8 +1,12 @@
 import * as browser from 'webextension-polyfill'
 import { listen, translate } from '@/utils'
 import { setupSettings } from '@/settings'
+import setupContextMenu from './contextMenu'
 
-browser.runtime.onInstalled.addListener(setupSettings)
+browser.runtime.onInstalled.addListener(() => {
+  setupSettings()
+  setupContextMenu()
+})
 
 browser.webNavigation.onCommitted.addListener(({ tabId, frameId }) => {
   if (frameId !== 0) return

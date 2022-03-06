@@ -8,8 +8,7 @@ export type OptionId =
   | 'floating_position'
   | 'floating_max_width'
   | 'floating_max_height'
-  | 'context_translate_page'
-  | 'context_translate_selection'
+  | 'context_enabled'
 
 interface OptionBase<T, K = string> {
   id: OptionId
@@ -130,15 +129,9 @@ const schema: Category[] = [
     name: 'Context menu',
     children: [
       {
-        id: 'context_translate_page',
+        id: 'context_enabled',
         type: 'boolean',
-        label: 'Translate this page',
-        defaultValue: true,
-      },
-      {
-        id: 'context_translate_selection',
-        type: 'boolean',
-        label: 'Translate selection',
+        label: 'Enabled',
         defaultValue: true,
       },
     ],
