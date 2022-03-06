@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { watchOnce, useClipboard } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
-import { computePosition, flip, shift, offset, type ReferenceElement } from '@floating-ui/dom'
+import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
 import { type Response } from '@/utils'
 import { getOption } from '@/settings'
 import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
@@ -29,10 +29,21 @@ const translationBox = ref<HTMLDivElement>()
 const offsetSpace = 10
 const iconUrl = browser.runtime.getURL('icons/icon.svg')
 
+/* -------------------------------- settings -------------------------------- */
+const maxWidth = ref('auto')
+const maxHeight = ref('auto')
+
+getOption('floating_max_width').then(v => (maxWidth.value = v || 'auto'))
+getOption('floating_max_height').then(v => (maxHeight.value = v || 'auto'))
+
 /* -------------------------- update boxes position ------------------------- */
+const position = ref<Placement>('bottom')
+
+getOption('floating_position').then(v => (position.value = v))
+
 async function updateBoxPosition(reference: ReferenceElement, box: HTMLElement) {
   const { x, y } = await computePosition(reference, box, {
-    placement: 'bottom',
+    placement: position.value,
     middleware: [flip(), shift({ padding: offsetSpace }), offset(offsetSpace)],
   })
 
@@ -105,7 +116,12 @@ function copyOutput() {
 </script>
 
 <template>
-  <div v-if="translation.trans" ref="translationBox" :class="s.translation">
+  <div
+    v-if="translation.trans"
+    ref="translationBox"
+    :class="s.translation"
+    :style="{ maxHeight, maxWidth }"
+  >
     <div :class="s.actions">
       <select v-model="outputLang" :class="s.lang" title="Language">
         <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
@@ -129,15 +145,7 @@ function copyOutput() {
     </div>
   </div>
 
-  <img
-    v-else
-    ref="tooltipBox"
-    :src="iconUrl"
-    :class="s.tooltip"
-    width="0"
-    height="0"
-    @click="getTranslation"
-  />
+  <img v-else ref="tooltipBox" :src="iconUrl" :class="s.tooltip" @click="getTranslation" />
 </template>
 
 <style lang="scss">
@@ -169,7 +177,8 @@ function copyOutput() {
 .translation {
   @extend %container;
 
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--s-sm);
   padding: var(--s-sm);
 }
@@ -215,6 +224,7 @@ function copyOutput() {
 .text {
   font-size: 1rem;
   margin: 0 var(--s-xs);
+  overflow: auto;
 }
 
 .dict {

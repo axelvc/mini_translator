@@ -51,6 +51,25 @@
   color: var(--c-bg);
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+
+  &-thumb {
+    background: var(--c-input);
+    border-radius: var(--rounded);
+
+    &:active {
+      background: var(--c-label);
+    }
+  }
+
+  &-track {
+    background: var(--c-input-alt);
+    border-radius: var(--rounded);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;

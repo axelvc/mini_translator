@@ -2,6 +2,7 @@ import * as browser from 'webextension-polyfill'
 import { App, createApp } from 'vue'
 import ContentScripts from './ContentScripts.vue'
 import { sleep } from '@/utils'
+import { getOption, listenOption } from '@/settings'
 
 /* ---------------------------------- setup --------------------------------- */
 const container = document.createElement('div')
@@ -37,8 +38,8 @@ function unmount() {
   app = null
 }
 
-document.addEventListener('mouseup', async ev => {
-  await sleep()
+async function handleMount(ev: MouseEvent) {
+  await sleep() // wait for the selection to be updated
 
   const isInside = container.contains(ev.target as HTMLElement)
   if (isInside) return
@@ -47,4 +48,16 @@ document.addEventListener('mouseup', async ev => {
 
   const selectedText = getSelection()?.toString().trim()
   if (selectedText) mount(selectedText, ev.x, ev.y)
-})
+}
+
+function handleEnableSelection(enabled: boolean) {
+  if (enabled) {
+    return document.addEventListener('mouseup', handleMount)
+  }
+
+  unmount()
+  document.removeEventListener('mouseup', handleMount)
+}
+
+getOption('floating_enabled').then(handleEnableSelection)
+listenOption('floating_enabled', handleEnableSelection)
