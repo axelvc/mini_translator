@@ -1,8 +1,10 @@
 import { getOption, listenOption } from '../settings'
 
-function updateTheme(theme: string) {
-  document.documentElement.dataset.theme = theme
-}
+export function updateTheme(root = document.documentElement) {
+  function handleChange(theme: string) {
+    root.dataset.theme = theme
+  }
 
-getOption('theme').then(updateTheme)
-listenOption('theme', updateTheme)
+  getOption('theme').then(handleChange)
+  listenOption('theme', handleChange)
+}

@@ -1,7 +1,7 @@
 import * as browser from 'webextension-polyfill'
 import { App, createApp } from 'vue'
 import ContentScripts from './ContentScripts.vue'
-import { sleep } from '@/utils'
+import { sleep, updateTheme } from '@/utils'
 import { getOption, listenOption } from '@/settings'
 
 /* ---------------------------------- setup --------------------------------- */
@@ -68,3 +68,4 @@ function handleEnableSelection(enabled: boolean) {
 
 getOption('floating_enabled').then(handleEnableSelection)
 listenOption('floating_enabled', handleEnableSelection)
+updateTheme(root)
