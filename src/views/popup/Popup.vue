@@ -37,13 +37,22 @@ getOption('toolbar_delay').then(delay => {
   )
 })
 
-watch(langs, async () => {
-  if (!input.value) return
-
-  await getTranslation()
-})
-
 const languages = getLanguages()
+
+watch(
+  () => ({ ...langs }),
+  async (value, oldValue) => {
+    if (!input.value) return
+
+    // swap if input and output are the same
+    if (value.input === value.output) {
+      langs.output = oldValue.input
+      langs.input = oldValue.output
+    }
+
+    await getTranslation()
+  },
+)
 
 function openSettings() {
   browser.runtime.openOptionsPage()
