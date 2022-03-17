@@ -120,7 +120,7 @@ function openSettings() {
 <style lang="scss" module="s">
 html,
 body {
-  width: 22rem;
+  width: 352px;
 }
 
 main {
@@ -133,11 +133,11 @@ main {
 .btn {
   display: grid;
   place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 24px;
+  height: 24px;
   color: var(--c-input);
   border-radius: var(--rounded-sm);
-  font-size: 1.25rem;
+  font-size: 20px;
   transition: color 0.2s ease-in-out;
 
   &:hover {
@@ -152,12 +152,12 @@ main {
 }
 
 .lang {
-  height: 1.5rem;
+  height: 24px;
   margin-right: auto;
   color: var(--c-label);
   font-weight: 600;
   border-radius: var(--rounded-sm);
-  font-size: 0.8125rem;
+  font-size: 13px;
   text-transform: capitalize;
   user-select: none;
 
@@ -170,7 +170,7 @@ main {
 .text {
   flex: 1;
   margin: 0 var(--s-xs);
-  font-size: 0.9375rem;
+  font-size: 15px;
   resize: none;
 }
 
@@ -184,14 +184,14 @@ main {
   @extend %box;
   flex-direction: column-reverse;
   padding: var(--s-xs);
-  height: 8rem;
+  height: 128px;
 }
 
 /* --------------------------------- output --------------------------------- */
 .output {
   @extend %box;
   flex-direction: column;
-  min-height: 4rem;
+  min-height: 64px;
 }
 
 .dict {
@@ -200,7 +200,7 @@ main {
   grid-template-columns: auto 1fr;
   margin: var(--s-xs);
   color: var(--c-label);
-  font-size: 0.875rem;
+  font-size: 14px;
 
   .pos {
     font-weight: 600;

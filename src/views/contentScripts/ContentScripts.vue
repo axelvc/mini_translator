@@ -167,9 +167,9 @@ function copyOutput() {
 .tooltip {
   @extend %container;
 
-  width: 1.5rem;
-  height: 1.5rem;
-  padding: 0.125rem;
+  width: 24px;
+  height: 24px;
+  padding: 2px;
   cursor: pointer;
 }
 
@@ -188,7 +188,7 @@ function copyOutput() {
   gap: var(--s-xs);
   align-items: center;
   color: var(--c-label);
-  height: 1.5rem;
+  height: 24px;
 }
 
 .lang {
@@ -196,7 +196,7 @@ function copyOutput() {
   margin-right: auto;
   border-radius: var(--rounded-sm);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 14px;
   text-transform: capitalize;
   user-select: none;
 
@@ -209,11 +209,11 @@ function copyOutput() {
 .btn {
   display: grid;
   place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 24px;
+  height: 24px;
   color: var(--c-input);
   border-radius: var(--rounded-sm);
-  font-size: 1.25rem;
+  font-size: 20px;
   transition: color 0.2s ease-in-out;
 
   &:hover {
@@ -222,7 +222,7 @@ function copyOutput() {
 }
 
 .text {
-  font-size: 1rem;
+  font-size: 16px;
   margin: 0 var(--s-xs);
   overflow: auto;
 }
@@ -233,7 +233,7 @@ function copyOutput() {
   grid-template-columns: auto 1fr;
   margin: var(--s-xs);
   color: var(--c-label);
-  font-size: 0.875rem;
+  font-size: 14px;
 
   .pos {
     font-weight: 600;

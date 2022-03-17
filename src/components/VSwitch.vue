@@ -46,16 +46,16 @@ const emit = defineEmits<{
 
 .switch {
   display: flex;
-  width: 2.5rem;
-  height: 1.5rem;
+  width: 40px;
+  height: 24px;
   border-radius: 99em;
   background: var(--c-input-alt);
   cursor: pointer;
-  outline-offset: 0.125rem;
+  outline-offset: 2px;
 
   span {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 24px;
+    height: 24px;
     background: var(--c-bg-alt);
     border-radius: inherit;
     transform: scale(0.8);

@@ -53,18 +53,18 @@ watch(settings, saveSettings)
 main {
   display: grid;
   gap: var(--s-xl);
-  max-width: 25rem;
-  margin: 3rem 8rem;
-  font-size: 1rem;
+  max-width: 400px;
+  margin: 48px 128px;
+  font-size: 16px;
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 48px;
   text-transform: capitalize;
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 24px;
   text-transform: capitalize;
 }
 
@@ -80,7 +80,7 @@ input[type='number'] {
 }
 
 textarea {
-  height: 8rem;
+  height: 128px;
   resize: vertical;
 }
 
@@ -90,7 +90,7 @@ section {
 }
 
 .input {
-  min-height: 2.5rem;
+  min-height: 40px;
   padding: var(--s-sm);
 }
 
@@ -108,7 +108,7 @@ section {
     top: 0;
     bottom: 0;
     left: 0;
-    width: 0.3125rem;
+    width: 5px;
     background: var(--c-input-alt);
     border-radius: 99em;
   }
@@ -124,13 +124,13 @@ section {
       gap: var(--s-xs);
       align-items: center;
       justify-content: space-between;
-      height: 2.5rem;
+      height: 40px;
     }
   }
 
   .name {
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 14px;
     color: var(--c-label);
   }
 }
