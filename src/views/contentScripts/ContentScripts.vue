@@ -123,7 +123,7 @@ function copyOutput() {
     :style="{ maxHeight, maxWidth }"
   >
     <div :class="s.actions">
-      <select v-model="outputLang" :class="s.lang" title="Language">
+      <select v-model="outputLang" :class="s.lang" title="Language" @change="getTranslation">
         <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
       </select>
 
