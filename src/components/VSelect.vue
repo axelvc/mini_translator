@@ -8,7 +8,7 @@ const p = defineProps({
     default: '',
   },
   options: {
-    type: Array as PropType<string[]>,
+    type: Array as PropType<string[] | [string, string][]>,
     required: true,
   },
   id: {
@@ -29,7 +29,15 @@ const emit = defineEmits<{
       :value="p.modelValue"
       @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
     >
-      <option v-for="option in p.options" :key="option" :value="option">{{ option }}</option>
+      <template v-if="Array.isArray(p.options[0])">
+        <option v-for="[value, name] in p.options" :key="value" :value="value">{{ name }}</option>
+      </template>
+
+      <template v-else>
+        <option v-for="option in p.options" :key="(option as string)" :value="option">
+          {{ option }}
+        </option>
+      </template>
     </select>
 
     <span class="icon">

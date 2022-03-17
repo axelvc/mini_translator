@@ -1,3 +1,5 @@
+import { getLanguages, getMainLang, getSecondLang } from '@/utils'
+
 export type OptionId =
   | 'main_language'
   | 'second_language'
@@ -10,7 +12,7 @@ export type OptionId =
   | 'floating_max_height'
   | 'context_enabled'
 
-interface OptionBase<T, K = string> {
+interface OptionBase<T, K extends string> {
   id: OptionId
   type: K
   label: string
@@ -26,7 +28,7 @@ interface OptionNumber extends OptionBase<number, 'number'> {
 }
 
 interface OptionSelect extends OptionBase<string, 'select'> {
-  options: string[]
+  options: string[] | [string, string][]
 }
 
 interface OptionText extends OptionBase<string, 'text'> {
@@ -39,9 +41,6 @@ interface Category {
   children: (OptionBoolean | OptionNumber | OptionSelect | OptionText)[]
 }
 
-// TODO: use real list
-const langs = ['en', 'es', 'fr', 'it', 'ja', 'ko', 'pt', 'ru', 'zh']
-
 const schema: Category[] = [
   {
     id: 'general',
@@ -51,16 +50,16 @@ const schema: Category[] = [
         id: 'main_language',
         type: 'select',
         label: 'Main language',
-        defaultValue: 'en',
-        options: langs,
+        defaultValue: getMainLang(),
+        options: getLanguages(),
         description: 'Language used to all translations',
       },
       {
         id: 'second_language',
         type: 'select',
         label: 'Second language',
-        defaultValue: 'es',
-        options: langs,
+        defaultValue: getSecondLang(),
+        options: getLanguages(),
         description: 'Language used if the input is same as main language',
       },
       {

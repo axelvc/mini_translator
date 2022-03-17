@@ -3,7 +3,7 @@ import { ref, reactive, watch } from 'vue'
 import { debouncedWatch, useClipboard } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
-import { listen, translate, Response } from '@/utils'
+import { listen, translate, Response, getLanguages } from '@/utils'
 import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
@@ -43,8 +43,7 @@ watch(langs, async () => {
   await getTranslation()
 })
 
-// TODO: remove
-const LANG_LIST = ['en', 'es', 'fr', 'it', 'nl', 'pt', 'ru']
+const languages = getLanguages()
 
 function openSettings() {
   browser.runtime.openOptionsPage()
@@ -65,7 +64,7 @@ function openSettings() {
 
       <div :class="s.actions">
         <select v-model="langs.input" :class="s.lang" title="Language">
-          <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
+          <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
         </select>
 
         <button :class="s.btn" title="Copy to clipboard" @click="copy(input)">
@@ -80,7 +79,7 @@ function openSettings() {
     <div v-if="output.trans" :class="s.output">
       <div :class="s.actions">
         <select v-model="langs.output" :class="s.lang" title="Language">
-          <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
+          <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
         </select>
 
         <button :class="s.btn" title="Copy to clipboard" @click="copy(output.trans)">

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { watchOnce, useClipboard } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { type Response } from '@/utils'
+import { getLanguages, type Response } from '@/utils'
 import { getOption } from '@/settings'
 import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
@@ -76,7 +76,7 @@ watchOnce(translationBox, box => {
 
 /* ------------------------------- translation ------------------------------ */
 // output language
-const LANG_LIST = ['en', 'es', 'fr', 'it', 'nl', 'pt', 'ru'] // TODO: remove
+const languages = getLanguages()
 const outputLang = ref('')
 getOption('main_language').then(v => (outputLang.value = v))
 
@@ -124,7 +124,7 @@ function copyOutput() {
   >
     <div :class="s.actions">
       <select v-model="outputLang" :class="s.lang" title="Language">
-        <option v-for="lang in LANG_LIST" :key="lang">{{ lang }}</option>
+        <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
       </select>
 
       <button :class="s.btn" title="Copy to clipboard" @click="copyOutput">
