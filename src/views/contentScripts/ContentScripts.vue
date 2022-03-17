@@ -84,14 +84,25 @@ getOption('main_language').then(v => (outputLang.value = v))
 const translation = ref<Response>({ trans: '' })
 
 async function getTranslation() {
-  const res: Response = await browser.runtime.sendMessage({
+  const message = {
     type: 'translate',
     data: {
       text: p.selectedText,
       from: 'auto',
       to: outputLang.value,
     },
-  })
+  }
+
+  let res: Response = await browser.runtime.sendMessage(message)
+
+  // use second language if the translation is same as selected text
+  if (res.trans === p.selectedText) {
+    message.data.from = outputLang.value
+    outputLang.value = await getOption('second_language')
+    message.data.to = outputLang.value
+
+    res = await browser.runtime.sendMessage(message)
+  }
 
   translation.value = res
 }
