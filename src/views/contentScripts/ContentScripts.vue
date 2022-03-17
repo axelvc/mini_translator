@@ -33,8 +33,8 @@ const iconUrl = browser.runtime.getURL('icons/icon.svg')
 const maxWidth = ref('auto')
 const maxHeight = ref('auto')
 
-getOption('floating_max_width').then(v => (maxWidth.value = v || 'auto'))
-getOption('floating_max_height').then(v => (maxHeight.value = v || 'auto'))
+getOption('floating_max_width').then(v => (maxWidth.value = v ? `${v}px` : 'auto'))
+getOption('floating_max_height').then(v => (maxHeight.value = v ? `${v}px` : 'auto'))
 
 /* -------------------------- update boxes position ------------------------- */
 const position = ref<Placement>('bottom')
