@@ -3,7 +3,7 @@ import { ref, reactive, watch } from 'vue'
 import { debouncedWatch, useClipboard } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
-import { listen, translate, Response, getLanguages } from '@/utils'
+import { listen, translate, Response, getLanguages, detectLang } from '@/utils'
 import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
@@ -14,12 +14,27 @@ const { copy } = useClipboard()
 const input = ref('')
 const output = ref<Response>({ trans: '' })
 
-const langs = reactive({ input: '', output: '' })
+const langs = reactive({ input: '', output: '', alternative: '' })
 getOption('main_language').then(v => (langs.input = v))
 getOption('second_language').then(v => (langs.output = v))
 
+function changeToAlternativeLang() {
+  langs.input = langs.alternative
+  langs.alternative = ''
+}
+
 async function getTranslation() {
-  output.value = await translate(input.value, langs.input, langs.output)
+  const translation = await translate(input.value, langs.input, langs.output)
+  const detectedLang = await detectLang(input.value)
+
+  // offer change to correct language if available
+  if (detectedLang !== langs.input) {
+    langs.alternative = detectedLang
+  } else {
+    langs.alternative = ''
+  }
+
+  output.value = translation
 }
 
 getOption('toolbar_delay').then(delay => {
@@ -87,7 +102,7 @@ function openSettings() {
 
     <div v-if="output.trans" :class="s.output">
       <div :class="s.actions">
-        <select v-model="langs.output" :class="s.lang" title="Language">
+        <select v-model="langs.output" :class="s.lang" title="To Language">
           <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
         </select>
 
@@ -109,11 +124,18 @@ function openSettings() {
       </div>
     </div>
 
-    <nav :class="s.nav">
+    <footer :class="s.footer">
+      <span v-if="langs.alternative" :class="s.changeLanguage">
+        Translate from:
+        <button @click="changeToAlternativeLang">
+          {{ languages.find(([code]) => code === langs.alternative)![1] }}
+        </button>
+      </span>
+
       <button :class="s.btn" title="Settings" @click="openSettings">
         <SettingsIcon class="icon" />
       </button>
-    </nav>
+    </footer>
   </main>
 </template>
 
@@ -147,6 +169,7 @@ main {
 
 .actions {
   display: flex;
+  justify-content: flex-end;
   gap: var(--s-sm);
   align-items: center;
 }
@@ -207,9 +230,20 @@ main {
   }
 }
 
-/* ----------------------------------- nav ---------------------------------- */
-.nav {
+/* --------------------------------- footer --------------------------------- */
+.footer {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+
+  .changeLanguage {
+    text-transform: capitalize;
+    color: var(--c-label);
+    flex: 1;
+
+    button {
+      color: var(--c-accent);
+    }
+  }
 }
 </style>
