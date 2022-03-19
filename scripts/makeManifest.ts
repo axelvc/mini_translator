@@ -1,15 +1,15 @@
+import fs from 'fs-extra'
 import { resolve } from 'path'
-import { type Manifest } from 'webextension-polyfill'
-import { writeJson } from 'fs-extra'
-import { capitalize, isDev, outDir, port, views } from './utils'
+import type { Manifest } from 'webextension-polyfill'
+import { isDev, outDir, port } from '../vite.config'
 import pkg from '../package.json'
 
 export default async function makeManifest() {
   const outPath = resolve(outDir, 'manifest.json')
   const manifest: Manifest.WebExtensionManifest = {
-    manifest_version: 2,
+    manifest_version: isDev ? 2 : 3,
     version: pkg.version,
-    name: capitalize(pkg.name),
+    name: pkg.visualName,
     description: pkg.description,
     icons: {
       16: 'icons/icon16.png',
@@ -17,23 +17,49 @@ export default async function makeManifest() {
       48: 'icons/icon48.png',
       128: 'icons/icon128.png',
     },
-    browser_action: {
-      default_popup: views.popup,
-    },
     options_ui: {
-      page: views.options,
+      page: 'options/index.html',
       open_in_tab: true,
     },
     background: {
-      page: views.background,
+      service_worker: 'background/main.js',
     },
-    web_accessible_resources: ['contentScripts.css', 'icons/*'],
-    permissions: ['storage', 'webNavigation', 'contextMenus', '*://*/'],
+    browser_action: {
+      default_popup: 'popup/index.html',
+    },
+    permissions: ['storage', 'webNavigation', 'contextMenus'],
+    host_permissions: ['*://*/'],
+    web_accessible_resources: ['contentScripts/*', 'icons/*'],
+    content_security_policy: `script-src 'self' http://localhost:${port}; object-src 'self'`,
   }
 
   if (isDev) {
-    manifest.content_security_policy = `script-src 'self' http://localhost:${port}; object-src 'self'`
+    manifest.permissions.push(...manifest.host_permissions)
+
+    delete manifest.host_permissions
+  } else {
+    Object.assign(manifest, {
+      action: manifest.browser_action,
+      web_accessible_resources: [
+        {
+          matches: ['<all_urls>'],
+          resources: manifest.web_accessible_resources as string[],
+        },
+      ],
+      content_security_policy: {
+        extension_pages: `script-src 'self'; object-src 'self'`,
+      },
+      content_scripts: [
+        {
+          matches: ['<all_urls>'],
+          js: ['contentScripts/main.js'],
+        },
+      ],
+    } as Manifest.WebExtensionManifest)
+
+    delete manifest.browser_action
   }
 
-  await writeJson(outPath, manifest, { spaces: 2 })
+  await fs.ensureDir(outDir)
+  await fs.writeJson(outPath, manifest, { spaces: 2 })
 }

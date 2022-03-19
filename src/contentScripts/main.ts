@@ -11,7 +11,7 @@ const shadow = container.attachShadow({ mode: 'closed' })
 // mount styles
 const style = document.createElement('link')
 
-style.setAttribute('href', browser.runtime.getURL('contentScripts.css'))
+style.setAttribute('href', browser.runtime.getURL('contentScripts/style.css'))
 style.setAttribute('rel', 'stylesheet')
 shadow.append(style)
 
@@ -26,7 +26,7 @@ shadow.append(root)
 let app: App<Element> | null = null
 
 function mount(selectedText: string, x: number, y: number) {
-  document.body.append(container)
+  document.body.appendChild(container)
   app = createApp(ContentScripts, { selectedText, x, y })
   app.mount(root)
 }

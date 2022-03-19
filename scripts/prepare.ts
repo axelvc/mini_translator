@@ -1,33 +1,31 @@
-import { dirname, resolve } from 'path'
-import { ensureDir, copy } from 'fs-extra'
-import { readFile, writeFile } from 'fs/promises'
-import { outDir, port, publicDir, root, views } from './utils'
+import fs from 'fs-extra'
+import { resolve } from 'path'
+import { isDev, outDir, port, root } from '../vite.config'
 import makeManifest from './makeManifest'
 
-async function copyIcons() {
-  const iconsDir = resolve(publicDir, 'icons')
-
-  await ensureDir(iconsDir)
-  await copy(iconsDir, resolve(outDir, 'icons'))
-}
-
 async function stubHtml() {
-  await Promise.all(
-    Object.entries(views).map(([name, viewPath]) => {
-      const srcPath = resolve(root, viewPath)
-      const outPath = resolve(outDir, viewPath)
-      const devUrl = `"http://localhost:${port}/views/${name}/main.ts"`
+  const inputs = ['popup', 'options']
 
-      return ensureDir(dirname(outPath))
-        .then(() => readFile(srcPath, 'utf8'))
-        .then(html => html.replace('"./main.ts"', devUrl))
-        .then(html => writeFile(outPath, html))
+  await Promise.all(
+    inputs.map(async name => {
+      const htmlPath = resolve(root, name, 'index.html')
+      const outPath = resolve(outDir, name)
+
+      await fs.ensureDir(outPath)
+
+      // replace script source
+      const html = await fs.readFile(htmlPath, 'utf8')
+      const parsedHtml = html.replace('"./main.ts"', `"http://localhost:${port}/${name}/main.ts"`)
+
+      await fs.writeFile(resolve(outPath, 'index.html'), parsedHtml)
     }),
   )
 }
 
-ensureDir(outDir).then(() => {
-  stubHtml()
-  copyIcons()
-  makeManifest()
-})
+async function prepare() {
+  await fs.ensureDir(outDir)
+  await stubHtml()
+}
+
+if (isDev) prepare()
+makeManifest()

@@ -5,6 +5,9 @@ module.exports = {
     node: true,
     'vue/setup-compiler-macros': true,
   },
+  globals: {
+    __DEV__: 'readonly',
+  },
   extends: ['plugin:vue/vue3-recommended', 'standard', 'prettier'],
   parserOptions: {
     ecmaVersion: 'latest',

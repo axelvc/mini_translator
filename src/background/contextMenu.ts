@@ -38,7 +38,12 @@ function createPageMenu() {
   browser.contextMenus.create({
     id: idPage,
     title: 'Translate page',
-    onclick: translatePage,
+  })
+
+  browser.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === idPage && tab) {
+      translatePage(info, tab)
+    }
   })
 }
 

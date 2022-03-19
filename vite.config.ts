@@ -1,22 +1,24 @@
 import { resolve } from 'path'
 import { defineConfig, UserConfigExport } from 'vite'
-import { root, outDir, views, port, isDev, publicDir } from './scripts/utils'
 import vue from '@vitejs/plugin-vue'
 import svgLoader from 'vite-svg-loader'
 
-if (isDev) {
-  import('./scripts/prepare')
-} else {
-  import('./scripts/makeManifest')
-}
+export const isDev = process.env.NODE_ENV !== 'production'
+
+export const port = Number(process.env.PORT) || 3000
+export const root = resolve(__dirname, 'src')
+export const outDir = resolve(__dirname, 'dist')
 
 export const config: UserConfigExport = {
   root,
-  publicDir,
+  publicDir: resolve(root, 'static'),
   resolve: {
     alias: {
       '@': root,
     },
+  },
+  define: {
+    __DEV__: isDev,
   },
   plugins: [
     vue(),
@@ -50,9 +52,12 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        popup: resolve(root, views.popup),
-        options: resolve(root, views.options),
-        background: resolve(root, views.background),
+        popup: resolve(root, 'popup/index.html'),
+        options: resolve(root, 'options/index.html'),
+      },
+      output: {
+        assetFileNames: '[name]/style.css',
+        entryFileNames: '[name]/main.js',
       },
     },
   },
