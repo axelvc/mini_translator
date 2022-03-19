@@ -11,8 +11,8 @@ const shadow = container.attachShadow({ mode: 'closed' })
 // mount styles
 const style = document.createElement('link')
 
-style.setAttribute('href', browser.runtime.getURL('contentScripts/style.css'))
 style.setAttribute('rel', 'stylesheet')
+style.setAttribute('href', browser.runtime.getURL('contentScripts/style.css'))
 shadow.append(style)
 
 // mount root
