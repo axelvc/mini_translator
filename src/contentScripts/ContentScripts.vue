@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { watchOnce, useClipboard } from '@vueuse/core'
+import { watchOnce } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
 import { listen, getLanguages, type Response } from '@/utils'
 import { getOption } from '@/settings'
-import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
+import CopyButton from '@/components/CopyButton.vue'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
 
 const p = defineProps({
@@ -106,13 +106,6 @@ async function getTranslation() {
 
   translation.value = res
 }
-
-// clipboard
-const { copy } = useClipboard()
-
-function copyOutput() {
-  copy(translation.value.trans)
-}
 </script>
 
 <template>
@@ -127,9 +120,7 @@ function copyOutput() {
         <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
       </select>
 
-      <button :class="s.btn" title="Copy to clipboard" @click="copyOutput">
-        <ClipboardIcon class="icon" />
-      </button>
+      <CopyButton :class="s.btn" :text="translation.trans" />
       <button :class="s.btn" title="Listen" @click="listen(p.selectedText, outputLang)">
         <VolumeIcon class="icon" />
       </button>

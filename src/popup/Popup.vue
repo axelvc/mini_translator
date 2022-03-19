@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { debouncedWatch, useClipboard } from '@vueuse/core'
+import { debouncedWatch } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
 import { listen, translate, Response, getLanguages, detectLang } from '@/utils'
-import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
+import CopyButton from '@/components/CopyButton.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
 
 const inputFocus = ref(false)
-const { copy } = useClipboard()
 
 const input = ref('')
 const output = ref<Response>({ trans: '' })
@@ -91,9 +90,7 @@ function openSettings() {
           <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
         </select>
 
-        <button :class="s.btn" title="Copy to clipboard" @click="copy(input)">
-          <ClipboardIcon class="icon" />
-        </button>
+        <CopyButton :class="s.btn" :text="input" />
         <button :class="s.btn" title="Listen" @click="listen(input, langs.input)">
           <VolumeIcon class="icon" />
         </button>
@@ -106,9 +103,7 @@ function openSettings() {
           <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
         </select>
 
-        <button :class="s.btn" title="Copy to clipboard" @click="copy(output.trans)">
-          <ClipboardIcon class="icon" />
-        </button>
+        <CopyButton :class="s.btn" :text="output.trans" />
         <button :class="s.btn" title="Listen" @click="listen(output.trans, langs.output)">
           <VolumeIcon class="icon" />
         </button>
