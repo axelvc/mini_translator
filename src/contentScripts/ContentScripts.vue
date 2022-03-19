@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { watchOnce, useClipboard } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { getLanguages, type Response } from '@/utils'
+import { listen, getLanguages, type Response } from '@/utils'
 import { getOption } from '@/settings'
 import ClipboardIcon from '@/components/icons/ClipboardIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
@@ -107,17 +107,6 @@ async function getTranslation() {
   translation.value = res
 }
 
-// listen
-async function listen() {
-  browser.runtime.sendMessage({
-    type: 'listen',
-    data: {
-      text: p.selectedText,
-      lang: outputLang.value,
-    },
-  })
-}
-
 // clipboard
 const { copy } = useClipboard()
 
@@ -141,7 +130,7 @@ function copyOutput() {
       <button :class="s.btn" title="Copy to clipboard" @click="copyOutput">
         <ClipboardIcon class="icon" />
       </button>
-      <button :class="s.btn" title="Listen" @click="listen">
+      <button :class="s.btn" title="Listen" @click="listen(p.selectedText, outputLang)">
         <VolumeIcon class="icon" />
       </button>
     </div>

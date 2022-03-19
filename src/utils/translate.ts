@@ -1,3 +1,5 @@
+import * as browser from 'webextension-polyfill'
+
 interface Dictionary {
   pos: string
   terms: string[]
@@ -30,4 +32,16 @@ export function translate(text: string, from: string, to: string): Promise<Respo
       dict: r.dict,
       trans: (r.sentences as any[]).reduce((text, sentence) => text + sentence.trans, ''),
     }))
+}
+
+export async function listen(text: string, lang: string): Promise<void> {
+  text = text.trim()
+
+  const url = await browser.runtime.sendMessage({
+    type: 'getAudio',
+    data: { text, lang },
+  })
+
+  const audio = new Audio(url)
+  audio.play()
 }
