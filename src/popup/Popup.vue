@@ -203,6 +203,10 @@ main {
   flex-direction: column-reverse;
   padding: var(--s-xs);
   height: 128px;
+
+  .lang {
+    background: var(--c-bg-alt);
+  }
 }
 
 /* --------------------------------- output --------------------------------- */
@@ -210,6 +214,10 @@ main {
   @extend %box;
   flex-direction: column;
   min-height: 64px;
+
+  .lang {
+    background: var(--c-bg);
+  }
 }
 
 .dict {

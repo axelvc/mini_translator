@@ -69,6 +69,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-color: var(--c-input) var(--c-input-alt);
+  scrollbar-width: thin;
 
   &:focus-visible,
   .outline {

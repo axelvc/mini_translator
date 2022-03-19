@@ -186,6 +186,7 @@ async function getTranslation() {
   height: 100%;
   margin-right: auto;
   border-radius: var(--rounded-sm);
+  background: var(--c-bg);
   font-weight: 600;
   font-size: 14px;
   text-transform: capitalize;
