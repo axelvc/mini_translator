@@ -35,6 +35,7 @@ export default async function makeManifest() {
 
   if (isDev) {
     manifest.permissions.push(...manifest.host_permissions)
+    manifest.background = { scripts: ['background/main.js'] }
 
     delete manifest.host_permissions
   } else {
