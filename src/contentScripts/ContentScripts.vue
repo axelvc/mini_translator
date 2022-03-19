@@ -121,7 +121,7 @@ async function getTranslation() {
       </select>
 
       <CopyButton :class="s.btn" :text="translation.trans" />
-      <button :class="s.btn" title="Listen" @click="listen(p.selectedText, outputLang)">
+      <button :class="s.btn" title="Listen" @click="listen(translation.trans, outputLang)">
         <VolumeIcon class="icon" />
       </button>
     </div>
