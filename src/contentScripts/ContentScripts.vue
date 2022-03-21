@@ -178,7 +178,7 @@ async function getTranslation() {
   display: flex;
   gap: var(--s-xs);
   align-items: center;
-  color: var(--c-label);
+  color: var(--c-fg-alt);
   height: 24px;
 }
 
@@ -224,7 +224,7 @@ async function getTranslation() {
   gap: var(--s-xs) var(--s-md);
   grid-template-columns: auto 1fr;
   margin: var(--s-xs);
-  color: var(--c-label);
+  color: var(--c-fg-alt);
   font-size: 14px;
 
   .pos {

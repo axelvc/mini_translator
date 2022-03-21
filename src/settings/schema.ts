@@ -78,9 +78,10 @@ const schema: Category[] = [
       {
         id: 'toolbar_delay',
         type: 'number',
-        label: 'Waiting time to translate (ms)',
+        label: 'Waiting time to translate',
         defaultValue: 500,
         min: 0,
+        description: 'Time to wait before translating the text (in milliseconds)',
       },
     ],
   },

@@ -5,7 +5,7 @@
   --c-accent: #4488ff;
   --c-input: #a3b1cc;
   --c-input-alt: #dfe3ed;
-  --c-label: #59667f;
+  --c-fg-alt: #59667f;
 }
 
 @mixin dark-theme {
@@ -14,7 +14,7 @@
   --c-bg-alt: #20222c;
   --c-input: #4d5266;
   --c-input-alt: #2b2e3b;
-  --c-label: #8f96ac;
+  --c-fg-alt: #8f96ac;
 }
 
 :root,
@@ -47,7 +47,7 @@
 }
 
 ::selection {
-  background: var(--c-label);
+  background: var(--c-fg-alt);
   color: var(--c-bg);
 }
 
@@ -60,7 +60,7 @@
     background: var(--c-input);
 
     &:active {
-      background: var(--c-label);
+      background: var(--c-fg-alt);
     }
   }
 }

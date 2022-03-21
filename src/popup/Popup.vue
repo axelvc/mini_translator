@@ -172,7 +172,7 @@ main {
 .lang {
   height: 24px;
   margin-right: auto;
-  color: var(--c-label);
+  color: var(--c-fg-alt);
   font-weight: 600;
   border-radius: var(--rounded-sm);
   font-size: 13px;
@@ -225,7 +225,7 @@ main {
   gap: var(--s-xs) var(--s-md);
   grid-template-columns: auto 1fr;
   margin: var(--s-xs);
-  color: var(--c-label);
+  color: var(--c-fg-alt);
   font-size: 14px;
 
   .pos {
@@ -241,7 +241,7 @@ main {
 
   .changeLanguage {
     text-transform: capitalize;
-    color: var(--c-label);
+    color: var(--c-fg-alt);
     flex: 1;
 
     button {

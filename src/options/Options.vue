@@ -42,6 +42,10 @@ watch(settings, saveSettings)
               <textarea v-else-if="option.multiline" v-model="settings[option.id]" class="input" />
               <input v-else v-model="settings[option.id]" type="text" class="input" />
             </label>
+
+            <div v-if="option.description" class="description">
+              {{ option.description }}
+            </div>
           </li>
         </ul>
       </section>
@@ -97,7 +101,7 @@ section {
 .list {
   position: relative;
   display: grid;
-  gap: var(--s-lg);
+  gap: var(--s-xl);
   padding-left: var(--s-lg);
   margin-left: var(--s-xs);
   list-style: none;
@@ -115,9 +119,12 @@ section {
 }
 
 .option {
+  display: grid;
+  gap: var(--s-xs);
+
   label {
     display: grid;
-    gap: var(--s-xs);
+    gap: inherit;
 
     &.inline {
       display: flex;
@@ -131,7 +138,12 @@ section {
   .name {
     font-weight: 600;
     font-size: 14px;
-    color: var(--c-label);
+    color: var(--c-fg);
+  }
+
+  .description {
+    color: var(--c-fg-alt);
+    font-size: 14px;
   }
 }
 </style>
