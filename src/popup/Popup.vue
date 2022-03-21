@@ -14,7 +14,7 @@ const input = ref('')
 const output = ref<Response>({ trans: '' })
 
 const langs = reactive({ input: '', output: '', alternative: '' })
-getOption('main_language').then(v => (langs.input = v))
+getOption('target_language').then(v => (langs.input = v))
 getOption('second_language').then(v => (langs.output = v))
 
 function changeToAlternativeLang() {

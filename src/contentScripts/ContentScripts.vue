@@ -78,7 +78,7 @@ watchOnce(translationBox, box => {
 // output language
 const languages = getLanguages()
 const outputLang = ref('')
-getOption('main_language').then(v => (outputLang.value = v))
+getOption('target_language').then(v => (outputLang.value = v))
 
 // translation
 const translation = ref<Response>({ trans: '' })

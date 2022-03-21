@@ -1,7 +1,7 @@
 import { getLanguages, getMainLang, getSecondLang } from '@/utils'
 
 export type OptionId =
-  | 'main_language'
+  | 'target_language'
   | 'second_language'
   | 'theme'
   | 'toolbar_delay'
@@ -47,9 +47,9 @@ const schema: Category[] = [
     name: 'General',
     children: [
       {
-        id: 'main_language',
+        id: 'target_language',
         type: 'select',
-        label: 'Main language',
+        label: 'Target language',
         defaultValue: getMainLang(),
         options: getLanguages(),
         description: 'Language used to all translations',
@@ -60,7 +60,7 @@ const schema: Category[] = [
         label: 'Second language',
         defaultValue: getSecondLang(),
         options: getLanguages(),
-        description: 'Language used if the input is same as main language',
+        description: 'Language used if the input is same as the target language',
       },
       {
         id: 'theme',

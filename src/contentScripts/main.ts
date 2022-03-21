@@ -43,7 +43,7 @@ async function handleMount(ev: MouseEvent) {
 
   // omit if tab language is same as main language
   const omitInMainLang = await getOption('floating_omit_main')
-  const mainLang = await getOption('main_language')
+  const mainLang = await getOption('target_language')
   const tabLang = document.documentElement.lang
   if (omitInMainLang && mainLang === tabLang) return
 

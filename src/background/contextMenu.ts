@@ -7,7 +7,7 @@ const idPage: OptionId = 'context_enabled'
 async function getLangs(tab: browser.Tabs.Tab): Promise<{ to: string; from: string }> {
   const langs = {
     from: await browser.tabs.detectLanguage(tab.id),
-    to: await getOption('main_language'),
+    to: await getOption('target_language'),
   }
 
   if (langs.to === langs.from) {
