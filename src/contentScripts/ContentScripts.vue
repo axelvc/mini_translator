@@ -145,7 +145,7 @@ async function getTranslation() {
 
 <style lang="scss" module="s">
 %container {
-  z-index: 99;
+  z-index: 2147483647; // max z-index (according to a google search)
   position: absolute;
   display: flex;
   border: 1px solid var(--c-bg-alt);
