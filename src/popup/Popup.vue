@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
-import { listen, translate, Response, getLanguages, detectLang } from '@/utils'
+import { listen, Response, getLanguages, translate } from '@/utils'
 import CopyButton from '@/components/CopyButton.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
@@ -11,11 +11,9 @@ import VolumeIcon from '@/components/icons/VolumeIcon.svg'
 const inputFocus = ref(false)
 
 const input = ref('')
-const output = ref<Response>({ trans: '' })
-
-const langs = reactive({ input: '', output: '', alternative: '' })
-getOption('target_language').then(v => (langs.input = v))
-getOption('second_language').then(v => (langs.output = v))
+const output = ref<Response>({ trans: '', srcLang: '' })
+const langs = reactive({ input: 'auto', output: '', alternative: '' })
+getOption('target_language').then(v => (langs.output = v))
 
 function changeToAlternativeLang() {
   langs.input = langs.alternative
@@ -23,17 +21,29 @@ function changeToAlternativeLang() {
 }
 
 async function getTranslation() {
-  const translation = await translate(input.value, langs.input, langs.output)
-  const detectedLang = await detectLang(input.value)
+  const preferredLangs = {
+    target: await getOption('target_language'),
+    second: await getOption('second_language'),
+  }
 
-  // offer change to correct language if available
-  if (detectedLang !== langs.input) {
-    langs.alternative = detectedLang
-  } else {
-    langs.alternative = ''
+  const from = langs.input
+  let to = langs.output
+  let translation = await translate(input.value, from, to)
+
+  // switch between target language and second language
+  if (translation.srcLang === to) {
+    if (to === preferredLangs.target) {
+      to = preferredLangs.second
+      translation = await translate(input.value, from, to)
+    } else if (to === preferredLangs.second) {
+      to = preferredLangs.target
+      translation = await translate(input.value, from, to)
+    }
   }
 
   output.value = translation
+  langs.output = to
+  langs.alternative = translation.srcLang !== langs.input ? translation.srcLang : ''
 }
 
 getOption('toolbar_delay').then(delay => {
@@ -41,7 +51,8 @@ getOption('toolbar_delay').then(delay => {
     input,
     async input => {
       if (!input) {
-        output.value = { trans: '' }
+        output.value = { trans: '', srcLang: '' }
+        langs.alternative = ''
         return
       }
 
@@ -52,21 +63,6 @@ getOption('toolbar_delay').then(delay => {
 })
 
 const languages = getLanguages()
-
-watch(
-  () => ({ ...langs }),
-  async (value, oldValue) => {
-    if (!input.value) return
-
-    // swap if input and output are the same
-    if (value.input === value.output) {
-      langs.output = oldValue.input
-      langs.input = oldValue.output
-    }
-
-    await getTranslation()
-  },
-)
 
 function openSettings() {
   browser.runtime.openOptionsPage()
@@ -86,8 +82,14 @@ function openSettings() {
       />
 
       <div :class="s.actions">
-        <select v-model="langs.input" :class="s.lang" title="Language">
-          <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
+        <select v-model="langs.input" :class="s.lang" title="From Language">
+          <option
+            v-for="[code, name] in [['auto', 'detect language'], ...languages]"
+            :key="code"
+            :value="code"
+          >
+            {{ name }}
+          </option>
         </select>
 
         <CopyButton :class="s.btn" :text="input" />

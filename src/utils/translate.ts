@@ -7,18 +7,8 @@ interface Dictionary {
 
 export interface Response {
   trans: string
+  srcLang: string
   dict?: Dictionary[]
-}
-
-export async function detectLang(text: string): Promise<string> {
-  const URL = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dj=1&q=${encodeURIComponent(
-    text.trim(),
-  )}`
-
-  const res = await fetch(URL)
-  const json = await res.json()
-
-  return json.ld_result.srclangs[0]
 }
 
 export function translate(text: string, from: string, to: string): Promise<Response> {
@@ -31,6 +21,7 @@ export function translate(text: string, from: string, to: string): Promise<Respo
     .then(r => ({
       dict: r.dict,
       trans: (r.sentences as any[]).reduce((text, sentence) => text + sentence.trans, ''),
+      srcLang: r.ld_result?.srclangs[0] || r.src,
     }))
 }
 

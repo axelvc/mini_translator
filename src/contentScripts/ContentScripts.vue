@@ -81,7 +81,7 @@ const outputLang = ref('')
 getOption('target_language').then(v => (outputLang.value = v))
 
 // translation
-const translation = ref<Response>({ trans: '' })
+const translation = ref<Response>({ trans: '', srcLang: '' })
 
 async function getTranslation() {
   const message = {
