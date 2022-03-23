@@ -5,8 +5,7 @@ import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
 import { getLanguages, translateMessage } from '@/utils'
 import type { TranslateData, TranslateResponse } from '@/background/translate'
-import CopyButton from '@/components/CopyButton.vue'
-import AudioButton from '@/components/AudioButton.vue'
+import VActions from '@/components/VActions/VActions.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 
 const inputFocus = ref(false)
@@ -64,36 +63,24 @@ function openSettings() {
         @blur="inputFocus = false"
       />
 
-      <div :class="s.actions">
-        <select v-model="input.lang" :class="s.lang" title="From Language" @change="getTranslation">
-          <option
-            v-for="[code, name] in [['auto', 'detect language'], ...languages]"
-            :key="code"
-            :value="code"
-          >
-            {{ name }}
-          </option>
-        </select>
-
-        <CopyButton :class="s.btn" :text="input.text" />
-        <AudioButton :class="s.btn" :text="input.text" :lang="translation.srcLang" />
-      </div>
+      <VActions
+        v-model:lang="input.lang"
+        :text="input.text"
+        :languages="[['auto', 'detect language'], ...languages]"
+        :voice-lang="translation.srcLang"
+        lang-title="From Language"
+        @update:lang="getTranslation"
+      />
     </div>
 
     <div v-if="translation.text" :class="s.output">
-      <div :class="s.actions">
-        <select
-          v-model="translation.outLang"
-          :class="s.lang"
-          title="To Language"
-          @change="getTranslation"
-        >
-          <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
-        </select>
-
-        <CopyButton :class="s.btn" :text="translation.text" />
-        <AudioButton :class="s.btn" :text="translation.text" :lang="translation.outLang" />
-      </div>
+      <VActions
+        v-model:lang="translation.outLang"
+        :text="translation.text"
+        :languages="languages"
+        lang-title="To Language"
+        @update:lang="getTranslation"
+      />
 
       <p :class="s.text">{{ translation.text }}</p>
 
@@ -113,7 +100,7 @@ function openSettings() {
         </button>
       </span>
 
-      <button :class="s.btn" title="Settings" @click="openSettings">
+      <button class="iconBtn" title="Settings" @click="openSettings">
         <SettingsIcon class="icon" />
       </button>
     </footer>
@@ -133,44 +120,6 @@ main {
 }
 
 /* --------------------------------- shared --------------------------------- */
-.btn {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  color: var(--c-input);
-  border-radius: var(--rounded-sm);
-  font-size: 20px;
-  transition: color 0.2s ease-in-out;
-
-  &:hover {
-    color: var(--c-accent);
-  }
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--s-sm);
-  align-items: center;
-}
-
-.lang {
-  height: 24px;
-  margin-right: auto;
-  color: var(--c-fg-alt);
-  font-weight: 600;
-  border-radius: var(--rounded-sm);
-  font-size: 13px;
-  text-transform: capitalize;
-  user-select: none;
-
-  option {
-    background: var(--c-bg-alt);
-    color: var(--c-fg);
-  }
-}
-
 .text {
   flex: 1;
   margin: 0 var(--s-xs);
@@ -189,10 +138,6 @@ main {
   flex-direction: column-reverse;
   padding: var(--s-xs);
   height: 128px;
-
-  .lang {
-    background: var(--c-bg-alt);
-  }
 }
 
 /* --------------------------------- output --------------------------------- */
@@ -200,10 +145,7 @@ main {
   @extend %box;
   flex-direction: column;
   min-height: 64px;
-
-  .lang {
-    background: var(--c-bg);
-  }
+  background: var(--c-bg);
 }
 
 .dict {

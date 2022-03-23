@@ -45,7 +45,7 @@ watch(p, () => audio.removeAttribute('src'))
 </script>
 
 <template>
-  <button title="Listen" :class="active && s.active" @click="active ? stop() : play()">
+  <button title="Listen" :class="['iconBtn', active && s.active]" @click="active ? stop() : play()">
     <VolumeOffIcon v-if="active" class="icon" />
     <VolumeOnIcon v-else class="icon" />
   </button>

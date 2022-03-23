@@ -122,3 +122,22 @@ select {
   height: 1em;
   width: 1em;
 }
+
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: var(--c-input);
+  border-radius: var(--rounded-sm);
+  font-size: 20px;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: var(--c-accent);
+  }
+
+  > svg {
+    @extend .icon;
+  }
+}

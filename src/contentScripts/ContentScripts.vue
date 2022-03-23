@@ -3,11 +3,10 @@ import { ref } from 'vue'
 import { watchOnce } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { getLanguages, translateMessage } from '@/utils'
 import { getOption } from '@/settings'
-import CopyButton from '@/components/CopyButton.vue'
-import AudioButton from '@/components/AudioButton.vue'
+import { getLanguages, translateMessage } from '@/utils'
 import type { TranslateResponse } from '@/background/translate'
+import VActions from '@/components/VActions/VActions.vue'
 
 const p = defineProps({
   selectedText: {
@@ -106,19 +105,13 @@ async function getTranslation() {
     :class="s.translation"
     :style="{ maxHeight, maxWidth }"
   >
-    <div :class="s.actions">
-      <select
-        v-model="translation.outLang"
-        :class="s.lang"
-        title="Language"
-        @change="getTranslation"
-      >
-        <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
-      </select>
-
-      <CopyButton :class="s.btn" :text="translation.text" />
-      <AudioButton :class="s.btn" :text="translation.text" :lang="translation.outLang" />
-    </div>
+    <VActions
+      v-model:lang="translation.outLang"
+      :text="translation.text"
+      :languages="languages"
+      lang-title="Language"
+      @update:lang="getTranslation"
+    />
 
     <p :class="s.text">{{ translation.text }}</p>
 
@@ -162,49 +155,9 @@ async function getTranslation() {
 .translation {
   @extend %container;
 
-  display: flex;
   flex-direction: column;
   gap: var(--s-sm);
   padding: var(--s-sm);
-}
-
-.actions {
-  display: flex;
-  gap: var(--s-xs);
-  align-items: center;
-  color: var(--c-fg-alt);
-  height: 24px;
-}
-
-.lang {
-  height: 100%;
-  margin-right: auto;
-  border-radius: var(--rounded-sm);
-  background: var(--c-bg);
-  font-weight: 600;
-  font-size: 14px;
-  text-transform: capitalize;
-  user-select: none;
-
-  option {
-    background: var(--c-bg-alt);
-    color: var(--c-fg);
-  }
-}
-
-.btn {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  color: var(--c-input);
-  border-radius: var(--rounded-sm);
-  font-size: 20px;
-  transition: color 0.2s ease-in-out;
-
-  &:hover {
-    color: var(--c-accent);
-  }
 }
 
 .text {
