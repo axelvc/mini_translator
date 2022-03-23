@@ -18,7 +18,12 @@ shadow.append(style)
 // mount root
 const root = document.createElement('div')
 
-root.style.setProperty('float', 'left') // to avoid flicker when mounted
+// to avoid flicker when mounted
+Object.assign(root.style, {
+  float: 'left',
+  width: 0,
+  height: 0,
+})
 root.classList.add('root')
 shadow.append(root)
 
