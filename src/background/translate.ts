@@ -22,9 +22,8 @@ async function fetchTranslations({
   to,
 }: Omit<TranslateData, 'alternative'>): Promise<TranslateResponse> {
   const translationUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&dt=bd&dj=1&q=${encodeURIComponent(
-    text.trim(),
+    text,
   )}`
-
   const res = await fetch(translationUrl)
   const json = await res.json()
 

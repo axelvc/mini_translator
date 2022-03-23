@@ -29,7 +29,7 @@ browser.runtime.onMessage.addListener(async ({ type, data }) => {
   switch (type) {
     case 'translate':
       return await translate(data)
-    case 'getAudio':
+    case 'getAudioUrl':
       return await getAudioUrl(data)
   }
 })

@@ -2,20 +2,21 @@ import { TranslateData, TranslateResponse } from '@/background/translate'
 import * as browser from 'webextension-polyfill'
 
 export async function translateMessage(data: TranslateData): Promise<TranslateResponse> {
+  data.text = data.text.trim()
+
   return browser.runtime.sendMessage({
     type: 'translate',
     data,
   })
 }
 
-export async function listenMessage(text: string, lang: string): Promise<void> {
+export async function audioUrlMessage(text: string, lang: string): Promise<string> {
   text = text.trim()
 
-  const url = await browser.runtime.sendMessage({
-    type: 'getAudio',
+  console.log('getting audio')
+
+  return browser.runtime.sendMessage({
+    type: 'getAudioUrl',
     data: { text, lang },
   })
-
-  const audio = new Audio(url)
-  audio.play()
 }

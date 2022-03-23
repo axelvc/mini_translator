@@ -3,11 +3,11 @@ import { ref, reactive } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
-import { listenMessage, getLanguages, translateMessage } from '@/utils'
+import { getLanguages, translateMessage } from '@/utils'
 import type { TranslateData, TranslateResponse } from '@/background/translate'
 import CopyButton from '@/components/CopyButton.vue'
+import AudioButton from '@/components/AudioButton.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
-import VolumeIcon from '@/components/icons/VolumeIcon.svg'
 
 const inputFocus = ref(false)
 const languages = getLanguages()
@@ -76,13 +76,7 @@ function openSettings() {
         </select>
 
         <CopyButton :class="s.btn" :text="input.text" />
-        <button
-          :class="s.btn"
-          title="Listen"
-          @click="listenMessage(input.text, translation.srcLang)"
-        >
-          <VolumeIcon class="icon" />
-        </button>
+        <AudioButton :class="s.btn" :text="input.text" :lang="translation.srcLang" />
       </div>
     </div>
 
@@ -98,13 +92,7 @@ function openSettings() {
         </select>
 
         <CopyButton :class="s.btn" :text="translation.text" />
-        <button
-          :class="s.btn"
-          title="Listen"
-          @click="listenMessage(translation.text, translation.outLang)"
-        >
-          <VolumeIcon class="icon" />
-        </button>
+        <AudioButton :class="s.btn" :text="translation.text" :lang="translation.outLang" />
       </div>
 
       <p :class="s.text">{{ translation.text }}</p>

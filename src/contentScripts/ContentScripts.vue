@@ -3,10 +3,10 @@ import { ref } from 'vue'
 import { watchOnce } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { getLanguages, listenMessage, translateMessage } from '@/utils'
+import { getLanguages, translateMessage } from '@/utils'
 import { getOption } from '@/settings'
 import CopyButton from '@/components/CopyButton.vue'
-import VolumeIcon from '@/components/icons/VolumeIcon.svg'
+import AudioButton from '@/components/AudioButton.vue'
 import type { TranslateResponse } from '@/background/translate'
 
 const p = defineProps({
@@ -117,13 +117,7 @@ async function getTranslation() {
       </select>
 
       <CopyButton :class="s.btn" :text="translation.text" />
-      <button
-        :class="s.btn"
-        title="Listen"
-        @click="listenMessage(translation.text, translation.outLang)"
-      >
-        <VolumeIcon class="icon" />
-      </button>
+      <AudioButton :class="s.btn" :text="translation.text" :lang="translation.outLang" />
     </div>
 
     <p :class="s.text">{{ translation.text }}</p>
