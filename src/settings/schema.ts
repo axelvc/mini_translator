@@ -98,7 +98,8 @@ const schema: Category[] = [
       {
         id: 'floating_omit_main',
         type: 'boolean',
-        label: 'Omit in main language',
+        label: 'Omit in target language',
+        description: 'Ignore pages with same language as target language',
         defaultValue: true,
       },
       {
@@ -112,6 +113,7 @@ const schema: Category[] = [
         id: 'floating_max_width',
         type: 'number',
         label: 'Max Width (px)',
+        description: 'Set to "0" to disable',
         defaultValue: 300,
         min: 0,
       },
@@ -119,6 +121,7 @@ const schema: Category[] = [
         id: 'floating_max_height',
         type: 'number',
         label: 'Max Height (px)',
+        description: 'Set to "0" to disable',
         defaultValue: 300,
         min: 0,
       },
@@ -132,6 +135,8 @@ const schema: Category[] = [
         id: 'context_enabled',
         type: 'boolean',
         label: 'Enabled',
+        description:
+          'If enabled, you will see in the context menu an option to translate the current page',
         defaultValue: true,
       },
     ],
