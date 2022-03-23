@@ -73,13 +73,16 @@ h2 {
 }
 
 input[type='number'] {
-  padding-right: 0;
-
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
-    padding: var(--s-xs);
-    margin-right: var(--s-xs);
-    height: 1em;
+    padding: 2px;
+  }
+
+  -moz-appearance: textfield;
+
+  &:focus,
+  &:hover {
+    -moz-appearance: auto;
   }
 }
 
