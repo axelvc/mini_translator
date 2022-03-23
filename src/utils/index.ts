@@ -1,4 +1,4 @@
-export * from './translate'
+export * from './messages'
 export * from './languages'
 export * from './updateTheme'
 

@@ -3,66 +3,49 @@ import { ref, reactive } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
-import { listen, Response, getLanguages, translate } from '@/utils'
+import { listenMessage, getLanguages, translateMessage } from '@/utils'
+import type { TranslateData, TranslateResponse } from '@/background/translate'
 import CopyButton from '@/components/CopyButton.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
 
 const inputFocus = ref(false)
+const languages = getLanguages()
 
-const input = ref('')
-const output = ref<Response>({ trans: '', srcLang: '' })
-const langs = reactive({ input: 'auto', output: '', alternative: '' })
-getOption('target_language').then(v => (langs.output = v))
-
-function changeToAlternativeLang() {
-  langs.input = langs.alternative
-  langs.alternative = ''
-}
+const input = reactive({ text: '', lang: 'auto' })
+const translation = ref<TranslateResponse>({ text: '', srcLang: '', outLang: '' })
 
 async function getTranslation() {
-  const preferredLangs = {
+  if (!input.text) {
+    translation.value = { text: '', srcLang: '', outLang: '' }
+    return
+  }
+
+  const { outLang } = translation.value
+  const langs = {
     target: await getOption('target_language'),
     second: await getOption('second_language'),
   }
 
-  const from = langs.input
-  let to = langs.output
-  let translation = await translate(input.value, from, to)
-
-  // switch between target language and second language
-  if (translation.srcLang === to) {
-    if (to === preferredLangs.target) {
-      to = preferredLangs.second
-      translation = await translate(input.value, from, to)
-    } else if (to === preferredLangs.second) {
-      to = preferredLangs.target
-      translation = await translate(input.value, from, to)
-    }
+  const data: TranslateData = {
+    text: input.text,
+    from: input.lang,
+    to: outLang || langs.target,
   }
 
-  output.value = translation
-  langs.output = to
-  langs.alternative = translation.srcLang !== langs.input ? translation.srcLang : ''
+  // swap between target and second language
+  if (data.to === langs.target) {
+    data.alternative = langs.second
+  } else if (data.to === langs.second) {
+    data.alternative = langs.target
+  }
+
+  translation.value = await translateMessage(data)
 }
 
-getOption('toolbar_delay').then(delay => {
-  debouncedWatch(
-    input,
-    async input => {
-      if (!input) {
-        output.value = { trans: '', srcLang: '' }
-        langs.alternative = ''
-        return
-      }
-
-      await getTranslation()
-    },
-    { debounce: delay },
-  )
+getOption('toolbar_delay').then(debounce => {
+  debouncedWatch(() => input.text, getTranslation, { debounce })
 })
-
-const languages = getLanguages()
 
 function openSettings() {
   browser.runtime.openOptionsPage()
@@ -73,7 +56,7 @@ function openSettings() {
   <main>
     <div :class="['input', inputFocus && 'outline', s.input]">
       <textarea
-        v-model="input"
+        v-model="input.text"
         :class="['no-outline', s.text]"
         placeholder="Type something"
         autofocus
@@ -82,7 +65,7 @@ function openSettings() {
       />
 
       <div :class="s.actions">
-        <select v-model="langs.input" :class="s.lang" title="From Language">
+        <select v-model="input.lang" :class="s.lang" title="From Language" @change="getTranslation">
           <option
             v-for="[code, name] in [['auto', 'detect language'], ...languages]"
             :key="code"
@@ -92,29 +75,42 @@ function openSettings() {
           </option>
         </select>
 
-        <CopyButton :class="s.btn" :text="input" />
-        <button :class="s.btn" title="Listen" @click="listen(input, langs.input)">
+        <CopyButton :class="s.btn" :text="input.text" />
+        <button
+          :class="s.btn"
+          title="Listen"
+          @click="listenMessage(input.text, translation.srcLang)"
+        >
           <VolumeIcon class="icon" />
         </button>
       </div>
     </div>
 
-    <div v-if="output.trans" :class="s.output">
+    <div v-if="translation.text" :class="s.output">
       <div :class="s.actions">
-        <select v-model="langs.output" :class="s.lang" title="To Language">
+        <select
+          v-model="translation.outLang"
+          :class="s.lang"
+          title="To Language"
+          @change="getTranslation"
+        >
           <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
         </select>
 
-        <CopyButton :class="s.btn" :text="output.trans" />
-        <button :class="s.btn" title="Listen" @click="listen(output.trans, langs.output)">
+        <CopyButton :class="s.btn" :text="translation.text" />
+        <button
+          :class="s.btn"
+          title="Listen"
+          @click="listenMessage(translation.text, translation.outLang)"
+        >
           <VolumeIcon class="icon" />
         </button>
       </div>
 
-      <p :class="s.text">{{ output.trans }}</p>
+      <p :class="s.text">{{ translation.text }}</p>
 
-      <div v-if="output.dict?.length" :class="s.dict">
-        <template v-for="{ pos, terms } in output.dict" :key="pos">
+      <div v-if="translation.dict?.length" :class="s.dict">
+        <template v-for="{ pos, terms } in translation.dict" :key="pos">
           <span :class="s.pos">{{ pos }}:</span>
           <span>{{ terms.join(', ') }}</span>
         </template>
@@ -122,10 +118,10 @@ function openSettings() {
     </div>
 
     <footer :class="s.footer">
-      <span v-if="langs.alternative" :class="s.changeLanguage">
-        Translate from:
-        <button @click="changeToAlternativeLang">
-          {{ languages.find(([code]) => code === langs.alternative)![1] }}
+      <span v-if="translation.text && translation.srcLang !== input.lang" :class="s.changeLanguage">
+        Translated from:
+        <button @click="input.lang = translation.srcLang">
+          {{ languages.find(([code]) => code === translation.srcLang)![1] }}
         </button>
       </span>
 

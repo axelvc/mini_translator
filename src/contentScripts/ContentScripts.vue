@@ -3,10 +3,11 @@ import { ref } from 'vue'
 import { watchOnce } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { listen, getLanguages, type Response } from '@/utils'
+import { getLanguages, listenMessage, translateMessage } from '@/utils'
 import { getOption } from '@/settings'
 import CopyButton from '@/components/CopyButton.vue'
 import VolumeIcon from '@/components/icons/VolumeIcon.svg'
+import type { TranslateResponse } from '@/background/translate'
 
 const p = defineProps({
   selectedText: {
@@ -75,58 +76,57 @@ watchOnce(translationBox, box => {
 })
 
 /* ------------------------------- translation ------------------------------ */
-// output language
 const languages = getLanguages()
-const outputLang = ref('')
-getOption('target_language').then(v => (outputLang.value = v))
 
-// translation
-const translation = ref<Response>({ trans: '', srcLang: '' })
+const translation = ref<TranslateResponse>({ text: '', srcLang: '', outLang: '' })
 
 async function getTranslation() {
-  const message = {
-    type: 'translate',
-    data: {
-      text: p.selectedText,
-      from: 'auto',
-      to: outputLang.value,
-    },
+  const userTarget = translation.value.outLang
+
+  // prefer language selected by the user
+  // only pass second if it's the first call
+  const langs = {
+    target: userTarget || (await getOption('target_language')),
+    second: userTarget ? null : await getOption('second_language'),
   }
 
-  let res: Response = await browser.runtime.sendMessage(message)
-
-  // use second language if the translation is same as selected text
-  if (res.trans === p.selectedText) {
-    message.data.from = outputLang.value
-    outputLang.value = await getOption('second_language')
-    message.data.to = outputLang.value
-
-    res = await browser.runtime.sendMessage(message)
-  }
-
-  translation.value = res
+  translation.value = await translateMessage({
+    text: p.selectedText,
+    from: 'auto',
+    to: langs.target,
+    alternative: langs.second,
+  })
 }
 </script>
 
 <template>
   <div
-    v-if="translation.trans"
+    v-if="translation.text"
     ref="translationBox"
     :class="s.translation"
     :style="{ maxHeight, maxWidth }"
   >
     <div :class="s.actions">
-      <select v-model="outputLang" :class="s.lang" title="Language" @change="getTranslation">
+      <select
+        v-model="translation.outLang"
+        :class="s.lang"
+        title="Language"
+        @change="getTranslation"
+      >
         <option v-for="[code, name] in languages" :key="code" :value="code">{{ name }}</option>
       </select>
 
-      <CopyButton :class="s.btn" :text="translation.trans" />
-      <button :class="s.btn" title="Listen" @click="listen(translation.trans, outputLang)">
+      <CopyButton :class="s.btn" :text="translation.text" />
+      <button
+        :class="s.btn"
+        title="Listen"
+        @click="listenMessage(translation.text, translation.outLang)"
+      >
         <VolumeIcon class="icon" />
       </button>
     </div>
 
-    <p :class="s.text">{{ translation.trans }}</p>
+    <p :class="s.text">{{ translation.text }}</p>
 
     <div v-if="translation.dict" :class="s.dict">
       <template v-for="{ pos, terms } in translation.dict" :key="pos">
