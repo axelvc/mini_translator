@@ -42,10 +42,16 @@ audio.onended = stop
 
 // force to download audio again if prop changes
 watch(p, () => audio.removeAttribute('src'))
+
+function handleClick() {
+  if (!p.text) return
+
+  active.value ? stop() : play()
+}
 </script>
 
 <template>
-  <button title="Listen" :class="['iconBtn', active && s.active]" @click="active ? stop() : play()">
+  <button title="Listen" :class="['iconBtn', active && s.active]" @click="handleClick">
     <VolumeOffIcon v-if="active" class="icon" />
     <VolumeOnIcon v-else class="icon" />
   </button>
