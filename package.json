@@ -9,7 +9,8 @@
     "dev:prepare": "npm run build:prepare",
     "dev:scripts": "npm run build:scripts",
     "build": "NODE_ENV=production run-s build:*",
-    "build:web": "vue-tsc --noEmit && vite build",
+    "build-v3": "NODE_ENV=production TARGET=v3 run-s build:*",
+    "build:web": "vite build",
     "build:prepare": "esno scripts/prepare.ts",
     "build:scripts": "esno vite.config.scripts.ts",
     "lint": "lint-staged"

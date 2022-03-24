@@ -1,13 +1,20 @@
+/* eslint-disable camelcase */
 import fs from 'fs-extra'
 import { resolve } from 'path'
 import type { Manifest } from 'webextension-polyfill'
 import { isDev, outDir, port } from '../vite.config'
 import pkg from '../package.json'
 
+const version3 = process.env.TARGET === 'v3'
+
 export default async function makeManifest() {
   const outPath = resolve(outDir, 'manifest.json')
+
+  const permissions = ['storage', 'contextMenus']
+  const host_permissions = ['*://*/']
+
   const manifest: Manifest.WebExtensionManifest = {
-    manifest_version: isDev ? 2 : 3,
+    manifest_version: 2,
     version: pkg.version,
     name: pkg.visualName,
     description: pkg.description,
@@ -22,43 +29,51 @@ export default async function makeManifest() {
       open_in_tab: true,
     },
     background: {
-      service_worker: 'background/main.js',
+      scripts: ['background/main.js'],
     },
     browser_action: {
       default_popup: 'popup/index.html',
     },
-    permissions: ['storage', 'webNavigation', 'contextMenus'],
-    host_permissions: ['*://*/'],
+    permissions: [...permissions, ...host_permissions],
     web_accessible_resources: ['contentScripts/*', 'icons/*'],
-    content_security_policy: `script-src 'self' http://localhost:${port}; object-src 'self'`,
+    content_security_policy: `script-src 'self'; object-src 'self'`,
   }
 
   if (isDev) {
-    manifest.permissions.push(...manifest.host_permissions)
-    manifest.background = { scripts: ['background/main.js'] }
-
-    delete manifest.host_permissions
+    manifest.permissions.push('webNavigation')
+    manifest.content_security_policy = `script-src 'self' http://localhost:${port}; object-src 'self'`
   } else {
-    Object.assign(manifest, {
-      action: manifest.browser_action,
-      web_accessible_resources: [
-        {
-          matches: ['<all_urls>'],
-          resources: manifest.web_accessible_resources as string[],
-        },
-      ],
-      content_security_policy: {
-        extension_pages: `script-src 'self'; object-src 'self'`,
-      },
+    Object.assign<typeof manifest, Partial<typeof manifest>>(manifest, {
       content_scripts: [
         {
           matches: ['<all_urls>'],
           js: ['contentScripts/main.js'],
         },
       ],
-    } as Manifest.WebExtensionManifest)
+    })
 
-    delete manifest.browser_action
+    if (version3) {
+      Object.assign<typeof manifest, Partial<typeof manifest>>(manifest, {
+        manifest_version: 3,
+        permissions,
+        host_permissions,
+        action: manifest.browser_action,
+        background: {
+          service_worker: (manifest.background as any).scripts[0],
+        },
+        content_security_policy: {
+          extension_pages: manifest.content_security_policy as string,
+        },
+        web_accessible_resources: [
+          {
+            matches: ['<all_urls>'],
+            resources: manifest.web_accessible_resources as string[],
+          },
+        ],
+      })
+
+      delete manifest.browser_action
+    }
   }
 
   await fs.ensureDir(outDir)
