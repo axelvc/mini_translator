@@ -22,7 +22,7 @@ interface OptionBase<T, K extends string> {
 
 interface OptionBoolean extends OptionBase<boolean, 'boolean'> {}
 
-interface OptionNumber extends OptionBase<number, 'number'> {
+export interface OptionNumber extends OptionBase<number, 'number'> {
   min?: number
   max?: number
 }

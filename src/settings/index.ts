@@ -53,4 +53,5 @@ export async function setupSettings() {
   if (save) await saveSettings(settings)
 }
 
+export * from './schema'
 export { settingSchema }

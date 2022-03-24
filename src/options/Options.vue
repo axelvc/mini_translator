@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
+import { clamp } from '@vueuse/core'
 import VSelect from '@/components/VSelect.vue'
 import VSwitch from '@/components/VSwitch.vue'
-import { settingSchema, getSettings, saveSettings, Settings } from '@/settings'
+import { settingSchema, getSettings, saveSettings, Settings, OptionNumber } from '@/settings'
 
 const loading = ref(true)
 const settings = reactive<Settings>({} as Settings)
@@ -13,6 +14,14 @@ getSettings().then(s => {
 })
 
 watch(settings, saveSettings)
+
+function handleInputNumberChange(ev: Event, { min, max, id }: OptionNumber) {
+  const n = Number((ev.target as HTMLInputElement).value)
+  min ??= n
+  max ??= Math.max(n, min)
+
+  settings[id] = clamp(n, min, max)
+}
 </script>
 <template>
   <main>
@@ -35,9 +44,12 @@ watch(settings, saveSettings)
               />
               <input
                 v-else-if="option.type === 'number'"
-                v-model="settings[option.id]"
+                :value="settings[option.id]"
+                :max="option.max"
+                :min="option.min"
                 type="number"
                 class="input"
+                @change="handleInputNumberChange($event, option)"
               />
               <textarea v-else-if="option.multiline" v-model="settings[option.id]" class="input" />
               <input v-else v-model="settings[option.id]" type="text" class="input" />
