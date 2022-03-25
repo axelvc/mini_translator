@@ -1,9 +1,8 @@
 import fs from 'fs-extra'
 import { resolve } from 'path'
-import { isDev, outDir, port, root } from '../vite.config'
-import makeManifest from './makeManifest'
+import { outDir, port, root } from '../vite.config'
 
-async function stubHtml() {
+export default async function stubHtml() {
   const inputs = ['popup', 'options']
 
   await Promise.all(
@@ -21,11 +20,3 @@ async function stubHtml() {
     }),
   )
 }
-
-async function prepare() {
-  await fs.ensureDir(outDir)
-  await stubHtml()
-}
-
-if (isDev) prepare()
-makeManifest()

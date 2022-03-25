@@ -5,11 +5,7 @@ import type { Manifest } from 'webextension-polyfill'
 import { isDev, outDir, port } from '../vite.config'
 import pkg from '../package.json'
 
-const version3 = process.env.TARGET === 'v3'
-
-export default async function makeManifest() {
-  const outPath = resolve(outDir, 'manifest.json')
-
+export default async function makeManifest({ version }: { version: number }) {
   const permissions = ['storage', 'contextMenus']
   const host_permissions = ['*://*/']
 
@@ -51,31 +47,30 @@ export default async function makeManifest() {
         },
       ],
     })
-
-    if (version3) {
-      Object.assign<typeof manifest, Partial<typeof manifest>>(manifest, {
-        manifest_version: 3,
-        permissions,
-        host_permissions,
-        action: manifest.browser_action,
-        background: {
-          service_worker: (manifest.background as any).scripts[0],
-        },
-        content_security_policy: {
-          extension_pages: manifest.content_security_policy as string,
-        },
-        web_accessible_resources: [
-          {
-            matches: ['<all_urls>'],
-            resources: manifest.web_accessible_resources as string[],
-          },
-        ],
-      })
-
-      delete manifest.browser_action
-    }
   }
 
-  await fs.ensureDir(outDir)
-  await fs.writeJson(outPath, manifest, { spaces: 2 })
+  if (version === 3) {
+    Object.assign<typeof manifest, Partial<typeof manifest>>(manifest, {
+      manifest_version: 3,
+      permissions,
+      host_permissions,
+      action: manifest.browser_action,
+      background: {
+        service_worker: (manifest.background as any).scripts[0],
+      },
+      content_security_policy: {
+        extension_pages: manifest.content_security_policy as string,
+      },
+      web_accessible_resources: [
+        {
+          matches: ['<all_urls>'],
+          resources: manifest.web_accessible_resources as string[],
+        },
+      ],
+    })
+
+    delete manifest.browser_action
+  }
+
+  await fs.writeJson(resolve(outDir, 'manifest.json'), manifest, { spaces: 2 })
 }

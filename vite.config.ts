@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { defineConfig, UserConfigExport } from 'vite'
+import { InlineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import svgLoader from 'vite-svg-loader'
 
@@ -7,10 +7,12 @@ export const isDev = process.env.NODE_ENV !== 'production'
 
 export const port = Number(process.env.PORT) || 3000
 export const root = resolve(__dirname, 'src')
-export const outDir = resolve(__dirname, 'dist')
+export const outDir = resolve(__dirname, 'build')
 
-export const config: UserConfigExport = {
+export const config: InlineConfig = {
+  configFile: false,
   root,
+  logLevel: isDev ? 'info' : 'silent',
   publicDir: resolve(root, 'static'),
   resolve: {
     alias: {
@@ -38,27 +40,3 @@ export const config: UserConfigExport = {
     }),
   ],
 }
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  ...config,
-  server: {
-    port,
-    strictPort: true,
-    hmr: { host: 'localhost' },
-  },
-  build: {
-    outDir,
-    emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        popup: resolve(root, 'popup/index.html'),
-        options: resolve(root, 'options/index.html'),
-      },
-      output: {
-        assetFileNames: '[name]/style.css',
-        entryFileNames: '[name]/main.js',
-      },
-    },
-  },
-})
