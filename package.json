@@ -3,6 +3,7 @@
   "visualName": "Mini Translator",
   "description": "Translate a text to a different language",
   "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development esno main.ts",
     "build": "NODE_ENV=production esno main.ts",
