@@ -1,3 +1,6 @@
+import { getOption } from '@/settings'
+import * as browser from 'webextension-polyfill'
+
 /* ----------------------------- translate text ----------------------------- */
 export interface TranslateData {
   text: string
@@ -48,6 +51,25 @@ export async function translate({
   }
 
   return translation
+}
+
+/* ----------------------------- translate page ----------------------------- */
+export async function translatePage(info: browser.Menus.OnClickData, tab: browser.Tabs.Tab) {
+  const encodedUrl = encodeURIComponent(info.pageUrl!)
+  const tabLang = await browser.tabs.detectLanguage(tab.id)
+  let targetLang = await getOption('target_language')
+
+  if (targetLang === tabLang) {
+    targetLang = await getOption('second_language')
+  }
+
+  const translationUrl = `https://translate.google.com/translate?hl=${targetLang}&tl=${targetLang}&sl=${tabLang}&u=${encodedUrl}`
+
+  browser.tabs.create({
+    url: translationUrl,
+    index: tab.index + 1,
+    active: true,
+  })
 }
 
 /* ---------------------------------- audio --------------------------------- */
