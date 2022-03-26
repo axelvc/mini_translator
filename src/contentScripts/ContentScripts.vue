@@ -135,10 +135,10 @@ async function getTranslation() {
   z-index: 2147483647; // max z-index (according to a google search)
   position: absolute;
   display: flex;
-  border: 1px solid var(--c-bg-alt);
+  border: 1px solid var(--c-input-alt);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
   border-radius: var(--rounded);
-  background: inherit;
+  background: var(--c-bg-alt);
 }
 
 /* --------------------------------- tooltip -------------------------------- */
