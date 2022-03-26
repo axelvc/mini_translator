@@ -1,4 +1,4 @@
-/* -------------------------------- translate ------------------------------- */
+/* ----------------------------- translate text ----------------------------- */
 export interface TranslateData {
   text: string
   from: string
