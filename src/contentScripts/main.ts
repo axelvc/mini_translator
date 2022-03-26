@@ -46,17 +46,17 @@ function unmount() {
 async function handleMount(ev: MouseEvent) {
   await sleep() // wait for the selection to be updated
 
+  // ignore click in the floating box
+  const isInside = container.contains(ev.target as HTMLElement)
+  if (isInside) return
+
+  unmount()
+
   // omit if tab language is same as main language
   const omitInMainLang = await getOption('floating_omit_main')
   const mainLang = await getOption('target_language')
   const tabLang = document.documentElement.lang
   if (omitInMainLang && mainLang === tabLang) return
-
-  // ingore click in the floating box
-  const isInside = container.contains(ev.target as HTMLElement)
-  if (isInside) return
-
-  unmount()
 
   const selectedText = getSelection()?.toString().trim()
   if (selectedText) mount(selectedText, ev.x, ev.y)
