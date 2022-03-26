@@ -10,7 +10,7 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export async function saveSettings(settings: Settings) {
-  await browser.storage.local.set({ settings })
+  await browser.storage.local.set({ settings: { ...settings } })
 }
 
 export async function getOption(key: OptionId): Promise<any> {
