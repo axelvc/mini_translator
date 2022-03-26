@@ -1,6 +1,6 @@
 import { build } from 'vite'
 import { resolve } from 'path'
-import { config, root, outDir, isDev } from '../../vite.config'
+import { config, root, outDir, isDev } from '../vite.config'
 
 const inputs = ['background', 'contentScripts']
 
@@ -10,7 +10,6 @@ export default async function buildBackground() {
       build({
         ...config,
         configFile: false,
-        mode: isDev ? 'development' : 'production',
         build: {
           outDir,
           emptyOutDir: false,

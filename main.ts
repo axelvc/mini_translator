@@ -3,8 +3,7 @@ import ora from 'ora'
 import chokidar from 'chokidar'
 import { globby } from 'globby'
 import { isDev, outDir, root } from './vite.config'
-import buildBackground from './scripts/build/background'
-import buildGeneral from './scripts/build/general'
+import buildBackground from './scripts/buildBackground'
 import stubHtml from './scripts/stubHtml'
 import makeManifest from './scripts/makeManifest'
 import makeZip from './scripts/makeZip'
@@ -19,10 +18,7 @@ async function cleanBuild() {
 }
 
 ;(async () => {
-  await fs.rm(outDir, { recursive: true, force: true })
-
   if (isDev) {
-    await buildGeneral()
     await buildBackground()
 
     await stubHtml()
@@ -35,10 +31,6 @@ async function cleanBuild() {
   }
 
   const spinner = ora()
-
-  spinner.start('Building general')
-  await buildGeneral()
-  spinner.succeed()
 
   spinner.start('Building background')
   await buildBackground()
