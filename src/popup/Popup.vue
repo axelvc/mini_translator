@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { getOption } from '@/settings'
-import { getLanguages, translateMessage } from '@/utils'
+import { getLanguages, getMessageError, translateMessage } from '@/utils'
 import type { TranslateData, TranslateResponse } from '@/background/translate'
 import VActions from '@/components/VActions/VActions.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
@@ -12,11 +12,15 @@ const inputFocus = ref(false)
 const languages = getLanguages()
 
 const input = reactive({ text: '', lang: 'auto' })
-const translation = ref<TranslateResponse>({ text: '', srcLang: '', outLang: '' })
+const initialStateTranslation: TranslateResponse = { text: '', srcLang: '', outLang: '' }
+const translation = ref(initialStateTranslation)
+const error = ref('')
 
 async function getTranslation() {
+  error.value = ''
+
   if (!input.text) {
-    translation.value = { text: '', srcLang: '', outLang: '' }
+    translation.value = initialStateTranslation
     return
   }
 
@@ -39,7 +43,12 @@ async function getTranslation() {
     data.alternative = langs.target
   }
 
-  translation.value = await translateMessage(data)
+  try {
+    translation.value = await translateMessage(data)
+  } catch (e) {
+    translation.value = initialStateTranslation
+    error.value = getMessageError(e)
+  }
 }
 
 getOption('toolbar_delay').then(debounce => {
@@ -93,6 +102,8 @@ function openSettings() {
     </div>
 
     <footer :class="s.footer">
+      <span v-if="error" class="error">{{ error }}</span>
+
       <span v-if="translation.text && translation.srcLang !== input.lang" :class="s.changeLanguage">
         Translated from:
         <button @click="input.lang = translation.srcLang">
@@ -166,11 +177,15 @@ main {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  font-size: 12px;
+
+  :global(.iconBtn) {
+    margin-left: auto;
+  }
 
   .changeLanguage {
     text-transform: capitalize;
     color: var(--c-fg-alt);
-    flex: 1;
 
     button {
       color: var(--c-accent);

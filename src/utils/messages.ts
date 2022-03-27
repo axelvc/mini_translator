@@ -18,3 +18,21 @@ export async function audioUrlMessage(text: string, lang: string): Promise<strin
     data: { text, lang },
   })
 }
+
+export function getMessageError(e: unknown): string {
+  const isError = e instanceof Error
+
+  if (isError) {
+    console.dir(e)
+
+    if (e.message === 'Failed to fetch') {
+      return 'Error: Unable to connect to the server'
+    }
+
+    if (e.message.startsWith('Server')) {
+      return e.message
+    }
+  }
+
+  return 'Error: Unknown error'
+}

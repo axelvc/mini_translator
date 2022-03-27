@@ -1,6 +1,14 @@
 import { getOption } from '@/settings'
 import * as browser from 'webextension-polyfill'
 
+class TranslateError extends Error {
+  constructor(message: string) {
+    super(`Server Error: ${message || 'Unknown Error'}`)
+
+    this.name = 'TranslateError'
+  }
+}
+
 /* ----------------------------- translate text ----------------------------- */
 export interface TranslateData {
   text: string
@@ -27,7 +35,13 @@ async function fetchTranslations({
   const translationUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&dt=bd&dj=1&q=${encodeURIComponent(
     text,
   )}`
+
   const res = await fetch(translationUrl)
+
+  if (!res.ok) {
+    throw new TranslateError(res.statusText)
+  }
+
   const json = await res.json()
 
   return {
@@ -84,6 +98,11 @@ export async function getAudioUrl({ text, lang }: AudioUrlData): Promise<string>
   )}&tl=${lang}&total=1&idx=0&textlen=${text.length}&client=tw-ob`
 
   const res = await fetch(audioUrl)
+
+  if (!res.ok) {
+    throw new TranslateError(res.statusText)
+  }
+
   const blob = await res.blob()
 
   return new Promise(resolve => {

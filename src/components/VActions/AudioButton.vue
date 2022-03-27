@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { watch } from 'vue'
-import { useEventBus, useToggle } from '@vueuse/core'
-import { audioUrlMessage } from '@/utils'
+import { ref, watch } from 'vue'
+import { useEventBus, useToggle, whenever, useTimeoutFn, useEventListener } from '@vueuse/core'
+import { audioUrlMessage, getMessageError } from '@/utils'
 import VolumeOnIcon from '@/components/icons/VolumeOnIcon.svg'
 import VolumeOffIcon from '@/components/icons/VolumeOffIcon.svg'
+import { computePosition, flip, offset, shift } from '@floating-ui/dom'
 
 const p = defineProps({
   text: {
@@ -20,13 +21,61 @@ const audio = new Audio()
 const bus = useEventBus('audio')
 const [active, setActive] = useToggle()
 
+/* ------------------------------ handle error ------------------------------ */
+const audioBox = ref<HTMLElement>()
+const errorBox = ref<HTMLElement>()
+const error = ref('')
+
+whenever(errorBox, async errorBox => {
+  const offsetSpace = 5
+
+  const { x, y } = await computePosition(audioBox.value!, errorBox, {
+    placement: 'bottom-end',
+    middleware: [flip(), shift({ padding: offsetSpace }), offset(offsetSpace)],
+  })
+
+  errorBox.style.setProperty('left', `${x}px`)
+  errorBox.style.setProperty('top', `${y}px`)
+})
+
+function handleError(e: unknown) {
+  error.value = getMessageError(e)
+  setActive(false)
+
+  // timeout to remove error message
+  const { start: startTimeout, stop: stopTimeout } = useTimeoutFn(() => {
+    error.value = ''
+  }, 2000)
+
+  startTimeout()
+
+  // remove message when user click
+  useEventListener(
+    document.body,
+    'click',
+    () => {
+      stopTimeout()
+      error.value = ''
+    },
+    { once: true },
+  )
+}
+
+/* -------------------------------- controls -------------------------------- */
 async function play() {
   // stop another audios
   bus.emit()
 
   setActive(true)
-  audio.src ||= await audioUrlMessage(p.text, p.lang) // only download if needed
-  audio.play()
+
+  try {
+    audio.src ||= await audioUrlMessage(p.text, p.lang) // only download if needed
+
+    // only play if no another audio is playing
+    active.value && audio.play()
+  } catch (e) {
+    handleError(e)
+  }
 }
 
 function stop() {
@@ -44,23 +93,40 @@ audio.onended = stop
 watch(p, () => audio.removeAttribute('src'))
 
 function handleClick() {
-  if (!p.text) return
+  if (!p.text || p.lang === 'auto') return
 
   active.value ? stop() : play()
 }
 </script>
 
 <template>
-  <button title="Listen" :class="['iconBtn', active && s.active]" @click="handleClick">
+  <button
+    ref="audioBox"
+    title="Listen"
+    :class="['iconBtn', s.btn, active && s.active]"
+    @click="handleClick"
+  >
     <VolumeOffIcon v-if="active" class="icon" />
     <VolumeOnIcon v-else class="icon" />
+
+    <span v-if="error" ref="errorBox" :class="['error', s.error]">{{ error }}</span>
   </button>
 </template>
 
 <style lang="scss" module="s">
-.active {
-  svg {
-    color: var(--c-fg);
+.btn {
+  position: relative;
+
+  &.active {
+    svg {
+      color: var(--c-fg);
+    }
   }
+}
+
+.error {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 13px;
 }
 </style>

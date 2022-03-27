@@ -44,8 +44,8 @@ defineEmits<{
       </option>
     </select>
 
-    <CopyButton :class="s.btn" :text="text" />
-    <AudioButton :class="s.btn" :text="text" :lang="voiceLang || lang" />
+    <CopyButton :text="text" />
+    <AudioButton :text="text" :lang="voiceLang || lang" />
   </div>
 </template>
 
