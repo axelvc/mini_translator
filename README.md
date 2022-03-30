@@ -2,9 +2,9 @@
 
 # ![](./src/static/icons/icon32.png) Mini Translator
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome-20222c?logo=google-chrome&logoColor=white&style=for-the-badge)](https://chrome.google.com/webstore/)
-[![Firefox Add-ons](https://img.shields.io/badge/Firefox-20222c?logo=firefox-browser&logoColor=white&style=for-the-badge)](https://addons.mozilla.org/)
-[![Edge Addons](https://img.shields.io/badge/Edge-20222c?logo=microsoft-edge&logoColor=white&style=for-the-badge)](https://microsoftedge.microsoft.com/)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome-20222c?logo=google-chrome&logoColor=white&style=for-the-badge)](https://chrome.google.com/webstore/detail/mini-translator/godoijpcenklboeghnkeafimbadkgiib)
+[![Firefox Add-ons](https://img.shields.io/badge/Firefox-20222c?logo=firefox-browser&logoColor=white&style=for-the-badge)](https://addons.mozilla.org/addon/mini-translator/)
+[![Edge Addons](https://img.shields.io/badge/Edge-20222c?logo=microsoft-edge&logoColor=white&style=for-the-badge)](https://microsoftedge.microsoft.com/addons/detail/fhpmmefclididfhfepdmjakbamipkdgp)
 
 </div>
 
