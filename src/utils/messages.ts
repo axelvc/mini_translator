@@ -1,5 +1,5 @@
 import { TranslateData, TranslateResponse } from '@/types/translation'
-import * as browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 
 export async function translateMessage(data: TranslateData): Promise<TranslateResponse> {
   data.text = data.text.trim()

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { watchOnce } from '@vueuse/core'
-import * as browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
 import { getOption } from '@/store'
 import { getLanguages, getMessageError, translateMessage } from '@/utils'
@@ -33,13 +33,25 @@ const iconUrl = browser.runtime.getURL('icons/icon.svg')
 const maxWidth = ref('auto')
 const maxHeight = ref('auto')
 
-getOption('floating_max_width').then(v => (maxWidth.value = v ? `${v}px` : 'auto'))
-getOption('floating_max_height').then(v => (maxHeight.value = v ? `${v}px` : 'auto'))
+getOption('floating_max_width')
+  .then(v => (maxWidth.value = v ? `${v}px` : 'auto'))
+  .catch(() => {
+    // TODO: handle error
+  })
+getOption('floating_max_height')
+  .then(v => (maxHeight.value = v ? `${v}px` : 'auto'))
+  .catch(() => {
+    // TODO: handle error
+  })
 
 /* -------------------------- update boxes position ------------------------- */
 const position = ref<Placement>('bottom')
 
-getOption('floating_position').then(v => (position.value = v))
+getOption('floating_position')
+  .then(v => (position.value = v))
+  .catch(() => {
+    // TODO: handle error
+  })
 
 async function updateBoxPosition(reference: ReferenceElement, box: HTMLElement) {
   const { x, y } = await computePosition(reference, box, {
@@ -118,7 +130,9 @@ async function getTranslation() {
         @update:lang="getTranslation"
       />
 
-      <p :class="s.text">{{ translation.text }}</p>
+      <p :class="s.text">
+        {{ translation.text }}
+      </p>
 
       <div v-if="translation.dict" :class="s.dict">
         <template v-for="{ pos, terms } in translation.dict" :key="pos">
@@ -137,7 +151,7 @@ async function getTranslation() {
 </template>
 
 <style lang="scss">
-@import '@/style.scss';
+@use '@/style.scss';
 </style>
 
 <style lang="scss" module="s">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
-import * as browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 import { getOption } from '@/store'
 import { getLanguages, getMessageError, translateMessage } from '@/utils'
 import type { TranslateData, TranslateResponse } from '@/types/translation'
@@ -51,9 +51,11 @@ async function getTranslation() {
   }
 }
 
-getOption('toolbar_delay').then(debounce => {
-  debouncedWatch(() => input.text, getTranslation, { debounce })
-})
+getOption('toolbar_delay')
+  .then(debounce => debouncedWatch(() => input.text, getTranslation, { debounce }))
+  .catch(() => {
+    // TODO: handle error
+  })
 
 function openSettings() {
   browser.runtime.openOptionsPage()
@@ -91,7 +93,9 @@ function openSettings() {
         @update:lang="getTranslation"
       />
 
-      <p :class="s.text">{{ translation.text }}</p>
+      <p :class="s.text">
+        {{ translation.text }}
+      </p>
 
       <div v-if="translation.dict?.length" :class="s.dict">
         <template v-for="{ pos, terms } in translation.dict" :key="pos">

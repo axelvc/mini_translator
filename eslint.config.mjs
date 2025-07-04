@@ -1,15 +1,15 @@
 import { defineConfig } from 'eslint/config'
-import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
+import globals from 'globals'
+import js from '@eslint/js'
+import ts from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import importPlugin from 'eslint-plugin-import'
 import pluginPromise from 'eslint-plugin-promise'
 import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default defineConfig([
-  eslint.configs.recommended,
-  tseslint.configs.recommended,
-  pluginVue.configs['flat/strongly-recommended'],
+  pluginPromise.configs['flat/recommended'],
+  eslintConfigPrettier,
   {
     ...importPlugin.flatConfigs.recommended,
     settings: {
@@ -19,6 +19,23 @@ export default defineConfig([
       },
     },
   },
-  pluginPromise.configs['flat/recommended'],
-  eslintConfigPrettier,
+   {
+    extends: [
+      js.configs.recommended,
+      ...ts.configs.recommended,
+      ...pluginVue.configs['flat/recommended'],
+    ],
+    files: ['**/*.{ts,vue}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: globals.browser,
+      parserOptions: {
+        parser: ts.parser,
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off'
+    },
+  },
 ])

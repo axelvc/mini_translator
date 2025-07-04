@@ -1,4 +1,4 @@
-import * as browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 import { translatePage } from '@/services/translation'
 import { getOption, listenOption } from '@/store'
 import { OptionId } from '@/store/schema'
@@ -26,6 +26,11 @@ function createMenu() {
 }
 
 export default function setupContextMenu() {
-  getOption(idPage).then(active => active && createMenu())
+  getOption(idPage)
+    .then(active => active && createMenu())
+    .catch(() => {
+      // TODO: handle error
+    })
+
   listenOption(idPage, active => (active ? createMenu() : removeMenu()))
 }

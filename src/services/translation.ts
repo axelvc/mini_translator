@@ -1,5 +1,5 @@
 import { getOption } from '@/store'
-import * as browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 import type { TranslateData, TranslateResponse } from '@/types/translation'
 
 class TranslateError extends Error {

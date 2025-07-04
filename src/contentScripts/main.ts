@@ -1,4 +1,4 @@
-import * as browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 import { App, createApp } from 'vue'
 import ContentScripts from './ContentScripts.vue'
 import { sleep } from '@/utils'
@@ -72,6 +72,10 @@ function handleEnableSelection(enabled: boolean) {
   document.removeEventListener('mouseup', handleMount)
 }
 
-getOption('floating_enabled').then(handleEnableSelection)
+getOption('floating_enabled')
+  .then(handleEnableSelection)
+  .catch(() => {
+    // TODO: handle error
+  })
 listenOption('floating_enabled', handleEnableSelection)
 useTheme(root)

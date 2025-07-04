@@ -1,4 +1,4 @@
-import * as browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill'
 import { setupSettings } from '@/store'
 import setupContextMenu from './contextMenu'
 import { translate, getAudioUrl } from '@/services/translation'
