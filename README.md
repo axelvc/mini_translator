@@ -1,6 +1,6 @@
 <div align="center">
 
-# ![](./src/static/icons/icon32.png) Mini Translator
+# ![](./src/assets/icons/icon32.png) Mini Translator
 
 [![Chrome Web Store](https://img.shields.io/badge/Chrome-20222c?logo=google-chrome&logoColor=white&style=for-the-badge)](https://chrome.google.com/webstore/detail/mini-translator/godoijpcenklboeghnkeafimbadkgiib)
 [![Firefox Add-ons](https://img.shields.io/badge/Firefox-20222c?logo=firefox-browser&logoColor=white&style=for-the-badge)](https://addons.mozilla.org/addon/mini-translator/)

@@ -1,7 +1,7 @@
 import * as browser from 'webextension-polyfill'
-import { setupSettings } from '@/settings'
+import { setupSettings } from '@/store'
 import setupContextMenu from './contextMenu'
-import { translate, getAudioUrl } from './translate'
+import { translate, getAudioUrl } from '@/services/translation'
 
 browser.runtime.onInstalled.addListener(async () => {
   await setupSettings()

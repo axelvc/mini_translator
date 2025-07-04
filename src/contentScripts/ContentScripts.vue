@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { watchOnce } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { getOption } from '@/settings'
+import { getOption } from '@/store'
 import { getLanguages, getMessageError, translateMessage } from '@/utils'
-import type { TranslateResponse } from '@/background/translate'
+import type { TranslateResponse } from '@/types/translation'
 import VActions from '@/components/VActions/VActions.vue'
 
 const p = defineProps({

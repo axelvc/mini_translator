@@ -1,5 +1,6 @@
-import { getOption } from '@/settings'
+import { getOption } from '@/store'
 import * as browser from 'webextension-polyfill'
+import type { TranslateData, TranslateResponse } from '@/types/translation'
 
 class TranslateError extends Error {
   constructor(message: string) {
@@ -7,24 +8,6 @@ class TranslateError extends Error {
 
     this.name = 'TranslateError'
   }
-}
-
-/* ----------------------------- translate text ----------------------------- */
-export interface TranslateData {
-  text: string
-  from: string
-  to: string
-  alternative?: string
-}
-
-export interface TranslateResponse {
-  text: string
-  srcLang: string
-  outLang: string
-  dict?: {
-    pos: string
-    terms: string[]
-  }[]
 }
 
 async function fetchTranslations({

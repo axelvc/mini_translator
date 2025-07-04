@@ -11,7 +11,7 @@ export const outDir = resolve(__dirname, 'build')
 
 export const config: InlineConfig = {
   root,
-  publicDir: resolve(root, 'static'),
+  publicDir: resolve(root, 'assets'),
   mode: isDev ? 'development' : 'production',
   resolve: {
     alias: {

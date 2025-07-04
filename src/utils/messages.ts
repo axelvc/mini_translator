@@ -1,4 +1,4 @@
-import { TranslateData, TranslateResponse } from '@/background/translate'
+import { TranslateData, TranslateResponse } from '@/types/translation'
 import * as browser from 'webextension-polyfill'
 
 export async function translateMessage(data: TranslateData): Promise<TranslateResponse> {

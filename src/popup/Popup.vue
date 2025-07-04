@@ -2,9 +2,9 @@
 import { ref, reactive } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
 import * as browser from 'webextension-polyfill'
-import { getOption } from '@/settings'
+import { getOption } from '@/store'
 import { getLanguages, getMessageError, translateMessage } from '@/utils'
-import type { TranslateData, TranslateResponse } from '@/background/translate'
+import type { TranslateData, TranslateResponse } from '@/types/translation'
 import VActions from '@/components/VActions/VActions.vue'
 import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 

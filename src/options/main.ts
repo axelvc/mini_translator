@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
-import { updateTheme } from '@/utils'
+import { useTheme } from '@/composables/useTheme'
 import Options from './Options.vue'
 import '@/style.scss'
 
-updateTheme()
+useTheme()
 createApp(Options).mount('#app')

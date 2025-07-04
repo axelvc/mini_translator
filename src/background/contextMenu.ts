@@ -1,7 +1,7 @@
 import * as browser from 'webextension-polyfill'
-import { translatePage } from './translate'
-import { getOption, listenOption } from '@/settings'
-import { OptionId } from '@/settings/schema'
+import { translatePage } from '@/services/translation'
+import { getOption, listenOption } from '@/store'
+import { OptionId } from '@/store/schema'
 
 const idPage: OptionId = 'context_enabled'
 

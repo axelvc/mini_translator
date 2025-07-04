@@ -3,7 +3,7 @@ import { reactive, ref, watch } from 'vue'
 import { clamp } from '@vueuse/core'
 import VSelect from '@/components/VSelect.vue'
 import VSwitch from '@/components/VSwitch.vue'
-import { settingSchema, getSettings, saveSettings, Settings, OptionNumber } from '@/settings'
+import { settingSchema, getSettings, saveSettings, Settings, OptionNumber } from '@/store'
 
 const loading = ref(true)
 const settings = reactive<Settings>({} as Settings)

@@ -1,6 +1,6 @@
-import { getOption, listenOption } from '../settings'
+import { getOption, listenOption } from '@/store'
 
-export function updateTheme(root = document.documentElement) {
+export function useTheme(root = document.documentElement) {
   function handleChange(theme: string) {
     root.dataset.theme = theme
   }

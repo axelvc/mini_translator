@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
-import { updateTheme } from '@/utils'
+import { useTheme } from '@/composables/useTheme'
 import Popup from './Popup.vue'
 import '@/style.scss'
 
-updateTheme()
+useTheme()
 createApp(Popup).mount('#app')
