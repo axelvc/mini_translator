@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import fs from 'fs-extra'
 import { resolve } from 'path'
 import type { Manifest } from 'webextension-polyfill'
@@ -56,7 +55,8 @@ export default async function makeManifest({ version }: { version: number }) {
       host_permissions,
       action: manifest.browser_action,
       background: {
-        service_worker: (manifest.background as any).scripts[0],
+        service_worker: (manifest.background as Manifest.WebExtensionManifestBackgroundC2Type)
+          .scripts![0],
       },
       content_security_policy: {
         extension_pages: manifest.content_security_policy as string,
