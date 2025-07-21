@@ -34,12 +34,12 @@ const maxWidth = ref('auto')
 const maxHeight = ref('auto')
 
 getOption('floating_max_width')
-  .then(v => (maxWidth.value = v ? `${v}px` : 'auto'))
+  .then((v) => (maxWidth.value = v ? `${v}px` : 'auto'))
   .catch(() => {
     // TODO: handle error
   })
 getOption('floating_max_height')
-  .then(v => (maxHeight.value = v ? `${v}px` : 'auto'))
+  .then((v) => (maxHeight.value = v ? `${v}px` : 'auto'))
   .catch(() => {
     // TODO: handle error
   })
@@ -48,7 +48,7 @@ getOption('floating_max_height')
 const position = ref<Placement>('bottom')
 
 getOption('floating_position')
-  .then(v => (position.value = v))
+  .then((v) => (position.value = v))
   .catch(() => {
     // TODO: handle error
   })
@@ -63,7 +63,7 @@ async function updateBoxPosition(reference: ReferenceElement, box: HTMLElement) 
   box.style.setProperty('top', `${y}px`)
 }
 
-watchOnce(tooltipBox, box => {
+watchOnce(tooltipBox, (box) => {
   const cursorPosition = {
     getBoundingClientRect: () => ({
       x: p.x,
@@ -80,7 +80,7 @@ watchOnce(tooltipBox, box => {
   updateBoxPosition(cursorPosition, box!)
 })
 
-watchOnce(translationBox, box => {
+watchOnce(translationBox, (box) => {
   const selectionRange = getSelection()!.getRangeAt(0)
 
   updateBoxPosition(selectionRange, box!)
@@ -115,12 +115,7 @@ async function getTranslation() {
 </script>
 
 <template>
-  <div
-    v-if="translation.text || error"
-    ref="translationBox"
-    :class="s.translation"
-    :style="{ maxHeight, maxWidth }"
-  >
+  <div v-if="translation.text || error" ref="translationBox" :class="s.translation" :style="{ maxHeight, maxWidth }">
     <template v-if="translation.text">
       <VActions
         v-model:lang="translation.outLang"

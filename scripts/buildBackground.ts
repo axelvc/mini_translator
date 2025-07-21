@@ -2,11 +2,11 @@ import { build } from 'vite'
 import { resolve } from 'path'
 import { config, root, outDir, isDev } from '../vite.config'
 
-const inputs = ['background', 'contentScripts']
+const inputs = ['background', 'views/contentScripts']
 
 export default async function buildBackground() {
   await Promise.all(
-    inputs.map(name =>
+    inputs.map((name) =>
       build({
         ...config,
         configFile: false,
@@ -23,6 +23,7 @@ export default async function buildBackground() {
           },
           rollupOptions: {
             output: {
+              extend: true,
               assetFileNames: `${name}/style.css`,
               entryFileNames: `${name}/main.js`,
             },

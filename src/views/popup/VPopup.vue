@@ -52,7 +52,7 @@ async function getTranslation() {
 }
 
 getOption('toolbar_delay')
-  .then(debounce => debouncedWatch(() => input.text, getTranslation, { debounce }))
+  .then((debounce) => debouncedWatch(() => input.text, getTranslation, { debounce }))
   .catch(() => {
     // TODO: handle error
   })

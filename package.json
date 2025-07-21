@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=development concurrently 'pnpm run dev:web' 'pnpm run dev:main'",
     "dev:web": "vite",
     "dev:main": "tsx main.ts",
-    "build": "NODE_ENV=production run-s build:*",
+    "build": "NODE_ENV=production concurrently 'pnpm run build:*'",
     "build:web": "vue-tsc --noEmit && vite build",
     "build:main": "tsx main.ts",
     "lint": "lint-staged"

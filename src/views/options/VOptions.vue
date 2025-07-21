@@ -8,10 +8,14 @@ import { settingSchema, getSettings, saveSettings, Settings, OptionNumber } from
 const loading = ref(true)
 const settings = reactive<Settings>({} as Settings)
 
-getSettings().then(s => {
-  loading.value = false
-  Object.assign(settings, s)
-})
+getSettings()
+  .then((s) => {
+    loading.value = false
+    Object.assign(settings, s)
+  })
+  .catch(() => {
+    // TODO: handle error
+  })
 
 watch(settings, saveSettings)
 
@@ -37,11 +41,7 @@ function handleInputNumberChange(ev: Event, { min, max, id }: OptionNumber) {
               <span class="name">{{ option.label }}</span>
 
               <VSwitch v-if="option.type === 'boolean'" v-model="settings[option.id]" />
-              <VSelect
-                v-else-if="option.type === 'select'"
-                v-model="settings[option.id]"
-                :options="option.options"
-              />
+              <VSelect v-else-if="option.type === 'select'" v-model="settings[option.id]" :options="option.options" />
               <input
                 v-else-if="option.type === 'number'"
                 :value="settings[option.id]"

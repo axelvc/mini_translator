@@ -17,7 +17,7 @@ if (__DEV__) {
     if (isWebStore || isDevTools || hasFrame) return
 
     browser.tabs.executeScript(tabId, {
-      file: 'contentScripts/main.js',
+      file: 'views/contentScripts/main.js',
       runAt: 'document_end',
     })
   })

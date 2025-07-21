@@ -20,17 +20,17 @@ export default async function makeManifest({ version }: { version: number }) {
       128: 'icons/icon128.png',
     },
     options_ui: {
-      page: 'options/index.html',
+      page: 'views/options/index.html',
       open_in_tab: true,
     },
     background: {
       scripts: ['background/main.js'],
     },
     browser_action: {
-      default_popup: 'popup/index.html',
+      default_popup: 'views/popup/index.html',
     },
     permissions: [...permissions, ...host_permissions],
-    web_accessible_resources: ['contentScripts/*', 'icons/*'],
+    web_accessible_resources: ['views/contentScripts/*', 'icons/*'],
     content_security_policy: `script-src 'self'; object-src 'self'`,
   }
 
@@ -42,7 +42,7 @@ export default async function makeManifest({ version }: { version: number }) {
       content_scripts: [
         {
           matches: ['<all_urls>'],
-          js: ['contentScripts/main.js'],
+          js: ['views/contentScripts/main.js'],
         },
       ],
     })

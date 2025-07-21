@@ -3,10 +3,10 @@ import { resolve } from 'path'
 import { outDir, port, root } from '../vite.config'
 
 export default async function stubHtml() {
-  const inputs = ['popup', 'options']
+  const inputs = ['views/popup', 'views/options']
 
   await Promise.all(
-    inputs.map(async name => {
+    inputs.map(async (name) => {
       const htmlPath = resolve(root, name, 'index.html')
       const outPath = resolve(outDir, name)
 

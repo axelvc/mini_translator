@@ -53,8 +53,8 @@ export default defineConfig({
     emptyOutDir: !isDev,
     rollupOptions: {
       input: {
-        popup: resolve(root, 'popup/index.html'),
-        options: resolve(root, 'options/index.html'),
+        popup: resolve(root, 'views/popup/index.html'),
+        options: resolve(root, 'views/options/index.html'),
       },
       output: {
         assetFileNames: '[name]/style.css',
