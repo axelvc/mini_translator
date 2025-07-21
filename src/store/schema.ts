@@ -10,7 +10,6 @@ export type OptionId =
   | 'floating_position'
   | 'floating_max_width'
   | 'floating_max_height'
-  | 'context_enabled'
 
 interface OptionBase<T, K extends string> {
   id: OptionId
@@ -20,6 +19,7 @@ interface OptionBase<T, K extends string> {
   description?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface OptionBoolean extends OptionBase<boolean, 'boolean'> {}
 
 export interface OptionNumber extends OptionBase<number, 'number'> {
@@ -124,20 +124,6 @@ const schema: Category[] = [
         description: 'Set to "0" to disable',
         defaultValue: 300,
         min: 0,
-      },
-    ],
-  },
-  {
-    id: 'context_menu',
-    name: 'Context menu',
-    children: [
-      {
-        id: 'context_enabled',
-        type: 'boolean',
-        label: 'Enabled',
-        description:
-          'If enabled, you will see in the context menu an option to translate the current page',
-        defaultValue: true,
       },
     ],
   },

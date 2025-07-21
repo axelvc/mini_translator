@@ -39,8 +39,8 @@ export async function setupSettings() {
   const settings = await getSettings()
   let save = false
 
-  settingSchema.forEach(category => {
-    category.children.forEach(option => {
+  settingSchema.forEach((category) => {
+    category.children.forEach((option) => {
       const { id, defaultValue } = option
 
       if (!Object.hasOwn(settings, id)) {

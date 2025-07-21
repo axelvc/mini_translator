@@ -1,6 +1,4 @@
-import browser from 'webextension-polyfill'
 import { TranslateData, TranslateResponse, AudioUrlData, TranslateError, Translator } from '@/types/translation'
-import { getOption } from '@/store'
 
 export class GoogleTranslator implements Translator {
   async translate({ text, from, to, alternative }: TranslateData): Promise<TranslateResponse> {
@@ -13,43 +11,17 @@ export class GoogleTranslator implements Translator {
     return translation
   }
 
-  async audio({ text, lang }: AudioUrlData): Promise<string> {
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&total=1&idx=0&textlen=${text.length}&client=tw-ob`
+  async audio(data: AudioUrlData): Promise<string> {
+    const audio = await this.audioRequest(data)
 
-    const res = await fetch(audioUrl)
-
-    if (!res.ok) {
-      throw new TranslateError(res.statusText)
-    }
-
-    const blob = await res.blob()
-
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const reader = new FileReader()
 
       reader.onload = () => {
         resolve(reader.result as string)
       }
 
-      reader.readAsDataURL(blob)
-    })
-  }
-
-  async page(info: browser.Menus.OnClickData, tab: browser.Tabs.Tab) {
-    const encodedUrl = encodeURIComponent(info.pageUrl!)
-    const tabLang = await browser.tabs.detectLanguage(tab.id)
-    let targetLang = await getOption('target_language')
-
-    if (targetLang === tabLang) {
-      targetLang = await getOption('second_language')
-    }
-
-    const translationUrl = `https://translate.google.com/translate?hl=${targetLang}&tl=${targetLang}&sl=${tabLang}&u=${encodedUrl}`
-
-    browser.tabs.create({
-      url: translationUrl,
-      index: tab.index + 1,
-      active: true,
+      reader.readAsDataURL(audio)
     })
   }
 
@@ -70,5 +42,18 @@ export class GoogleTranslator implements Translator {
       srcLang: json.ld_result?.srclangs[0] || json.src,
       outLang: to,
     }
+  }
+
+  private async audioRequest({ text, lang }: AudioUrlData): Promise<Blob> {
+    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&total=1&idx=0&textlen=${text.length}&client=tw-ob`
+
+    const res = await fetch(audioUrl)
+
+    if (!res.ok) {
+      throw new TranslateError(res.statusText)
+    }
+
+    const blob = await res.blob()
+    return blob
   }
 }

@@ -1,13 +1,11 @@
 import browser from 'webextension-polyfill'
 import { setupSettings } from '@/store'
-import setupContextMenu from './contextMenu'
 import { GoogleTranslator } from '@/services/translation'
 
 const translator = new GoogleTranslator()
 
 browser.runtime.onInstalled.addListener(async () => {
   await setupSettings()
-  setupContextMenu()
 })
 
 if (__DEV__) {
