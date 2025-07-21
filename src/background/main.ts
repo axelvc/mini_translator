@@ -1,7 +1,9 @@
 import browser from 'webextension-polyfill'
 import { setupSettings } from '@/store'
 import setupContextMenu from './contextMenu'
-import { translate, getAudioUrl } from '@/services/translation'
+import { GoogleTranslator } from '@/services/translation'
+
+const translator = new GoogleTranslator()
 
 browser.runtime.onInstalled.addListener(async () => {
   await setupSettings()
@@ -10,13 +12,11 @@ browser.runtime.onInstalled.addListener(async () => {
 
 if (__DEV__) {
   browser.webNavigation.onCommitted.addListener(({ tabId, frameId, url }) => {
-    if (
-      frameId !== 0 ||
-      url === 'https://chrome.google.com/webstore' ||
-      /^(chrome|edge|devtools).*:\/\//.test(url)
-    ) {
-      return
-    }
+    const isWebStore = url.startsWith('https://chrome.google.com/webstore')
+    const isDevTools = /^(chrome|edge|devtools).*:\/\//.test(url)
+    const hasFrame = frameId !== 0
+
+    if (isWebStore || isDevTools || hasFrame) return
 
     browser.tabs.executeScript(tabId, {
       file: 'contentScripts/main.js',
@@ -25,11 +25,11 @@ if (__DEV__) {
   })
 }
 
-browser.runtime.onMessage.addListener(async ({ type, data }) => {
+browser.runtime.onMessage.addListener(async ({ type, data }: any) => {
   switch (type) {
     case 'translate':
-      return await translate(data)
+      return await translator.translate(data)
     case 'getAudioUrl':
-      return await getAudioUrl(data)
+      return await translator.audio(data)
   }
 })

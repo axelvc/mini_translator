@@ -1,13 +1,14 @@
 import browser from 'webextension-polyfill'
-import { translatePage } from '@/services/translation'
+import { GoogleTranslator } from '@/services/translation'
 import { getOption, listenOption } from '@/store'
 import { OptionId } from '@/store/schema'
 
 const idPage: OptionId = 'context_enabled'
+const translator = new GoogleTranslator()
 
 function handleClickContextMenu(info: browser.Menus.OnClickData, tab?: browser.Tabs.Tab) {
   if (info.menuItemId === idPage && tab) {
-    translatePage(info, tab)
+    translator.page(info, tab)
   }
 }
 
