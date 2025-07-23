@@ -30,22 +30,13 @@ export default async function makeManifest({ version }: { version: number }) {
       default_popup: 'views/popup/index.html',
     },
     permissions: [...permissions, ...host_permissions],
-    web_accessible_resources: ['views/contentScripts/*', 'icons/*'],
+    web_accessible_resources: ['icons/*'],
     content_security_policy: `script-src 'self'; object-src 'self'`,
   }
 
   if (isDev) {
     manifest.permissions.push('webNavigation')
     manifest.content_security_policy = `script-src 'self' http://localhost:${port}; object-src 'self'`
-  } else {
-    Object.assign<typeof manifest, Partial<typeof manifest>>(manifest, {
-      content_scripts: [
-        {
-          matches: ['<all_urls>'],
-          js: ['views/contentScripts/main.js'],
-        },
-      ],
-    })
   }
 
   if (version === 3) {
@@ -55,7 +46,7 @@ export default async function makeManifest({ version }: { version: number }) {
       host_permissions,
       action: manifest.browser_action,
       background: {
-        service_worker: (manifest.background as Manifest.WebExtensionManifestBackgroundC2Type).scripts![0],
+        service_worker: manifest.background.scripts![0],
       },
       content_security_policy: {
         extension_pages: manifest.content_security_policy as string,

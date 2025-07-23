@@ -8,13 +8,8 @@ export class Settings {
   static readonly DEFAULT_SETTINGS = {
     target_language: getMainLang(),
     second_language: getSecondLang(),
-    theme: 'system',
     toolbar_delay: 500,
-    floating_enabled: true,
-    floating_omit_main: true,
-    floating_position: 'bottom',
-    floating_max_width: 300,
-    floating_max_height: 300,
+    theme: 'system',
   }
 
   static instance: Settings

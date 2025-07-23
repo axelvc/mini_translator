@@ -39,15 +39,10 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 
         <ul class="list">
           <li v-for="option in category.settings" :key="option.id" class="option">
-            <label :class="[option.type === 'boolean' && 'inline']">
+            <label>
               <span class="name">{{ option.label }}</span>
 
-              <span v-if="option.type === 'boolean'" class="switch">
-                <input ref="input" v-model="settingsData[option.id]" type="checkbox" />
-                <span><span /></span>
-              </span>
-
-              <span v-else-if="option.type === 'select'" class="select">
+              <span v-if="option.type === 'select'" class="select">
                 <select v-model="settingsData[option.id]" class="input">
                   <template v-if="Array.isArray(option.options[0])">
                     <option v-for="[value, name] in option.options" :key="value" :value="value">{{ name }}</option>
@@ -160,14 +155,6 @@ section {
   label {
     display: grid;
     gap: inherit;
-
-    &.inline {
-      display: flex;
-      gap: var(--s-xs);
-      align-items: center;
-      justify-content: space-between;
-      height: 40px;
-    }
   }
 
   .name {
@@ -179,50 +166,6 @@ section {
   .description {
     color: var(--c-fg-alt);
     font-size: 14px;
-  }
-}
-
-.switch {
-  input {
-    position: absolute;
-    height: 0;
-    width: 0;
-    opacity: 0;
-
-    &:focus-visible {
-      outline: none;
-
-      & + span {
-        outline: var(--outline);
-      }
-    }
-
-    &:checked + span {
-      background-color: var(--c-accent);
-
-      span {
-        transform: scale(0.8) translateX(80%);
-      }
-    }
-  }
-
-  span {
-    display: flex;
-    width: 40px;
-    height: 24px;
-    border-radius: 99em;
-    background: var(--c-input-alt);
-    cursor: pointer;
-    outline-offset: 2px;
-
-    span {
-      width: 24px;
-      height: 24px;
-      background: var(--c-bg-alt);
-      border-radius: inherit;
-      transform: scale(0.8);
-      transition: all 200ms ease-out;
-    }
   }
 }
 
