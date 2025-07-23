@@ -7,7 +7,7 @@ import { settingsDefinition } from './settings.definition'
 import { SettingId, useSettings } from '@/shared/composables/useSettings'
 import { useTheme } from '@/shared/composables/useTheme'
 
-const { settings, save } = useSettings()
+const { settings, save, loaded } = useSettings()
 
 useTheme()
 watch(settings, save)
@@ -22,50 +22,59 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 }
 </script>
 <template>
-  <main>
+  <main v-if="loaded">
     <h1>Options</h1>
 
     <section v-for="category in settingsDefinition" :key="category.id">
       <h2>{{ category.label }}</h2>
 
-      <ul class="list">
-        <li v-for="option in category.settings" :key="option.id" class="option">
-          <label>
+      <div class="list">
+        <label v-for="option in category.settings" :key="option.id" class="option">
+          <div>
             <span class="name">{{ option.label }}</span>
-
-            <span v-if="option.type === 'select'" class="select">
-              <select v-model="settings[option.id]" class="input">
-                <template v-if="Array.isArray(option.options[0])">
-                  <option v-for="[value, name] in option.options" :key="value" :value="value">{{ name }}</option>
-                </template>
-
-                <template v-else>
-                  <option v-for="value in option.options" :key="value as string" :value="value">
-                    {{ value }}
-                  </option>
-                </template>
-              </select>
-
-              <span class="icon">
-                <ChevronDownIcon />
-              </span>
-            </span>
-
-            <input
-              v-else-if="option.type === 'number'"
-              class="input"
-              type="number"
-              :value="settings[option.id]"
-              :min="option.min"
-              @change="handleInputNumberChange($event, option)"
-            />
-          </label>
-
-          <div v-if="'description' in option" class="description">
-            {{ option.description }}
+            <p v-if="'description' in option" class="description">
+              {{ option.description }}
+            </p>
           </div>
-        </li>
-      </ul>
+
+          <div v-if="option.type === 'select'" class="select">
+            <select v-model="settings[option.id]" class="input">
+              <template v-if="Array.isArray(option.options[0])">
+                <option v-for="[value, name] in option.options" :key="value.toString()" :value="value">
+                  {{ name }}
+                </option>
+              </template>
+
+              <template v-else>
+                <option v-for="value in option.options" :key="value as string" :value="value">
+                  {{ value }}
+                </option>
+              </template>
+            </select>
+
+            <span class="icon">
+              <ChevronDownIcon />
+            </span>
+          </div>
+
+          <div v-else-if="option.type === 'boolean'" class="boolean">
+            <input ref="input" v-model="settings[option.id]" type="checkbox" class="no-outline" />
+
+            <span class="switch">
+              <span />
+            </span>
+          </div>
+
+          <input
+            v-else-if="option.type === 'number'"
+            class="input"
+            type="number"
+            :value="settings[option.id]"
+            :min="option.min"
+            @change="handleInputNumberChange($event, option)"
+          />
+        </label>
+      </div>
     </section>
   </main>
 </template>
@@ -142,9 +151,9 @@ section {
   display: grid;
   gap: var(--s-xs);
 
-  label {
-    display: grid;
-    gap: inherit;
+  &:has(.boolean) {
+    display: flex;
+    align-items: center;
   }
 
   .name {
@@ -156,6 +165,7 @@ section {
   .description {
     color: var(--c-fg-alt);
     font-size: 14px;
+    text-wrap: pretty;
   }
 }
 
@@ -175,6 +185,49 @@ section {
     right: var(--s-sm);
     pointer-events: none;
     color: var(--c-input);
+  }
+}
+
+.boolean {
+  float: right;
+
+  input {
+    position: absolute;
+    height: 0;
+    width: 0;
+    opacity: 0;
+
+    &:focus-visible + .switch {
+      outline: var(--outline);
+    }
+
+    &:checked + .switch {
+      background-color: var(--c-accent);
+
+      span {
+        transform: scale(0.8) translateX(80%);
+      }
+    }
+  }
+
+  .switch {
+    float: right;
+    display: flex;
+    width: 40px;
+    height: 24px;
+    border-radius: 99em;
+    background: var(--c-input-alt);
+    cursor: pointer;
+    outline-offset: 2px;
+
+    span {
+      width: 24px;
+      height: 24px;
+      background: var(--c-bg-alt);
+      border-radius: inherit;
+      transform: scale(0.8);
+      transition: transform 200ms ease-out;
+    }
   }
 }
 </style>

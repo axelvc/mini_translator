@@ -36,7 +36,8 @@ export default defineConfig([
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
-      'promise/always-return': 'off'
+      'promise/always-return': 'off',
+      'no-empty': 'off',
     },
   },
 ])

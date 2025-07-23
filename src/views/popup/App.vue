@@ -13,7 +13,7 @@ import { useSettings } from '@/shared/composables/useSettings'
 const input = reactive({ text: '', from: 'auto', to: '' })
 const inputFocus = ref(false)
 const { error, res, translate } = useTranslator()
-const { settings } = useSettings()
+const { settings, loaded } = useSettings()
 
 useTheme()
 
@@ -27,10 +27,17 @@ async function handleTranslate() {
 }
 
 watch(() => [input.from, input.to], handleTranslate)
-watchOnce(
-  () => settings.toolbar_delay,
-  (debounce) => debouncedWatch(() => input.text, handleTranslate, { debounce }),
-)
+watchOnce(loaded, async () => {
+  if (settings.start_with_selection) {
+    try {
+      const [text] = await browser.tabs.executeScript(undefined, { code: 'window.getSelection().toString()' })
+      input.text = (text as string) || ''
+      handleTranslate()
+    } catch {}
+  }
+
+  debouncedWatch(() => input.text, handleTranslate, { debounce: settings.toolbar_delay })
+})
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, readonly, ref } from 'vue'
 import browser from 'webextension-polyfill'
 import { getMainLang, getSecondLang } from '@/shared/utils'
 
@@ -10,14 +10,18 @@ export const DEFAULT_SETTINGS = {
   second_language: getSecondLang(),
   toolbar_delay: 500,
   theme: 'system',
+  start_with_selection: true,
 }
 
 const storage = browser.storage.sync
 const settings = reactive<Settings>({ ...DEFAULT_SETTINGS })
+const loaded = ref(false)
 
 async function load() {
+  if (loaded.value) return
   const r = await storage.get({ settings: DEFAULT_SETTINGS })
   Object.assign(settings, r.settings)
+  loaded.value = true
 }
 
 async function save(newSettings = settings) {
@@ -31,11 +35,11 @@ storage.onChanged.addListener((changes) => {
 })
 
 export function useSettings() {
-  const loaded = load()
+  load()
 
   return {
     settings,
     save,
-    loaded,
+    loaded: readonly(loaded),
   }
 }

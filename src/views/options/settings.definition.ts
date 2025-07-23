@@ -32,6 +32,12 @@ export const settingsDefinition = [
         label: 'Theme',
         options: ['light', 'dark', 'system'],
       },
+      {
+        id: 'start_with_selection',
+        type: 'boolean',
+        label: 'Start with selection',
+        description: 'When opening the translator in the toolbar, start with the selected text if there is any',
+      },
     ],
   },
 ] as const
