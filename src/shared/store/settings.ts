@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill'
-import { getMainLang, getSecondLang } from '@/utils'
+import { getMainLang, getSecondLang } from '@/shared/utils'
 
 export type SettingsData = typeof Settings.DEFAULT_SETTINGS
 export type Option = keyof SettingsData

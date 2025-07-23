@@ -1,6 +1,6 @@
-import { Settings } from '@/store/settings'
-import { TranslateResponse } from '@/types/translation'
-import { getMessageError, translateMessage } from '@/utils'
+import { Settings } from '@/shared/store/settings'
+import { TranslateResponse } from '@/shared/types/translation'
+import { getMessageError, translateMessage } from '@/shared/utils'
 import { readonly, ref } from 'vue'
 
 export function useTranslator() {

@@ -1,4 +1,4 @@
-import { TranslateData, TranslateResponse, AudioUrlData, TranslateError, Translator } from '@/types/translation'
+import { TranslateData, TranslateResponse, AudioUrlData, TranslateError, Translator } from '@/shared/types/translation'
 
 export class GoogleTranslator implements Translator {
   async translate({ text, from, to, alternative }: TranslateData): Promise<TranslateResponse> {

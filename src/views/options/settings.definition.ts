@@ -1,4 +1,4 @@
-import { LANGUAGES_ENTRIES } from '@/utils'
+import { LANGUAGES_ENTRIES } from '@/shared/utils'
 
 export const settingsDefinition = [
   {

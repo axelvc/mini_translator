@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill'
-import { GoogleTranslator } from '@/services/translation'
+import { GoogleTranslator } from './services/translation'
 
 const translator = new GoogleTranslator()
 

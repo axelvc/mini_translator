@@ -1,4 +1,4 @@
-import { Settings } from '@/store/settings'
+import { Settings } from '@/shared/store/settings'
 
 export function useTheme(root = document.documentElement) {
   const settings = new Settings()

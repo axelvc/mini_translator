@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useEventBus, useToggle, whenever, useTimeoutFn, useEventListener } from '@vueuse/core'
-import { audioUrlMessage, getMessageError } from '@/utils'
-import VolumeOnIcon from '@/components/icons/VolumeOnIcon.svg'
-import VolumeOffIcon from '@/components/icons/VolumeOffIcon.svg'
+import { audioUrlMessage, getMessageError } from '@/shared/utils'
+import VolumeOnIcon from '@/shared/components/icons/VolumeOnIcon.svg'
+import VolumeOffIcon from '@/shared/components/icons/VolumeOffIcon.svg'
 import { computePosition, flip, offset, shift } from '@floating-ui/dom'
 
 const p = defineProps({
@@ -26,7 +26,7 @@ const audioBox = ref<HTMLElement>()
 const errorBox = ref<HTMLElement>()
 const error = ref('')
 
-whenever(errorBox, async errorBox => {
+whenever(errorBox, async (errorBox) => {
   const offsetSpace = 5
 
   const { x, y } = await computePosition(audioBox.value!, errorBox, {
@@ -72,7 +72,9 @@ async function play() {
     audio.src ||= await audioUrlMessage(p.text, p.lang) // only download if needed
 
     // only play if no another audio is playing
-    active.value && audio.play()
+    if (active.value) {
+      audio.play()
+    }
   } catch (e) {
     handleError(e)
   }
@@ -95,17 +97,16 @@ watch(p, () => audio.removeAttribute('src'))
 function handleClick() {
   if (!p.text || p.lang === 'auto') return
 
-  active.value ? stop() : play()
+  if (active.value) {
+    stop()
+  } else {
+    play()
+  }
 }
 </script>
 
 <template>
-  <button
-    ref="audioBox"
-    title="Listen"
-    :class="['iconBtn', s.btn, active && s.active]"
-    @click="handleClick"
-  >
+  <button ref="audioBox" title="Listen" :class="['iconBtn', s.btn, active && s.active]" @click="handleClick">
     <VolumeOffIcon v-if="active" class="icon" />
     <VolumeOnIcon v-else class="icon" />
 

@@ -2,10 +2,10 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { clamp } from '@vueuse/core'
 
-import ChevronDownIcon from '@/components/icons/ChevronDownIcon.svg'
-import { Settings, SettingsData } from '@/store/settings'
+import ChevronDownIcon from '@/shared/components/icons/ChevronDownIcon.svg'
+import { Settings, SettingsData } from '@/shared/store/settings'
 import { settingsDefinition } from './settings.definition'
-import { useTheme } from '@/composables/useTheme'
+import { useTheme } from '@/shared/composables/useTheme'
 
 const settings = new Settings()
 

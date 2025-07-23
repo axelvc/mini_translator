@@ -3,12 +3,12 @@ import { ref, reactive, onMounted, watch } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
 import browser from 'webextension-polyfill'
 
-import SettingsIcon from '@/components/icons/SettingsIcon.svg'
-import VActions from '@/components/VActions/VActions.vue'
-import { LANGUAGES_ENTRIES } from '@/utils'
-import { Settings } from '@/store/settings'
-import { useTheme } from '@/composables/useTheme'
-import { useTranslator } from '@/composables/useTranslator'
+import SettingsIcon from '@/shared/components/icons/SettingsIcon.svg'
+import VActions from './components/VActions/VActions.vue'
+import { LANGUAGES_ENTRIES } from '@/shared/utils'
+import { Settings } from '@/shared/store/settings'
+import { useTheme } from '@/shared/composables/useTheme'
+import { useTranslator } from './composables/useTranslator'
 
 const settings = new Settings()
 const inputFocus = ref(false)
