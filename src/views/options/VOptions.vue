@@ -2,8 +2,7 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { clamp } from '@vueuse/core'
 
-import VSelect from '@/components/VSelect.vue'
-import VSwitch from '@/components/VSwitch.vue'
+import ChevronDownIcon from '@/components/icons/ChevronDownIcon.svg'
 import { Settings, SettingsData } from '@/store/settings'
 import { settingsDefinition } from './settings.definition'
 import { useTheme } from '@/composables/useTheme'
@@ -43,18 +42,35 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
             <label :class="[option.type === 'boolean' && 'inline']">
               <span class="name">{{ option.label }}</span>
 
-              <VSwitch v-if="option.type === 'boolean'" v-model="settingsData[option.id]" />
-              <VSelect
-                v-else-if="option.type === 'select'"
-                v-model="settingsData[option.id]"
-                :options="option.options"
-              />
+              <span v-if="option.type === 'boolean'" class="switch">
+                <input ref="input" v-model="settingsData[option.id]" type="checkbox" />
+                <span><span /></span>
+              </span>
+
+              <span v-else-if="option.type === 'select'" class="select">
+                <select v-model="settingsData[option.id]" class="input">
+                  <template v-if="Array.isArray(option.options[0])">
+                    <option v-for="[value, name] in option.options" :key="value" :value="value">{{ name }}</option>
+                  </template>
+
+                  <template v-else>
+                    <option v-for="value in option.options" :key="value as string" :value="value">
+                      {{ value }}
+                    </option>
+                  </template>
+                </select>
+
+                <span class="icon">
+                  <ChevronDownIcon />
+                </span>
+              </span>
+
               <input
                 v-else-if="option.type === 'number'"
+                class="input"
+                type="number"
                 :value="settingsData[option.id]"
                 :min="option.min"
-                type="number"
-                class="input"
                 @change="handleInputNumberChange($event, option)"
               />
             </label>
@@ -163,6 +179,69 @@ section {
   .description {
     color: var(--c-fg-alt);
     font-size: 14px;
+  }
+}
+
+.switch {
+  input {
+    position: absolute;
+    height: 0;
+    width: 0;
+    opacity: 0;
+
+    &:focus-visible {
+      outline: none;
+
+      & + span {
+        outline: var(--outline);
+      }
+    }
+
+    &:checked + span {
+      background-color: var(--c-accent);
+
+      span {
+        transform: scale(0.8) translateX(80%);
+      }
+    }
+  }
+
+  span {
+    display: flex;
+    width: 40px;
+    height: 24px;
+    border-radius: 99em;
+    background: var(--c-input-alt);
+    cursor: pointer;
+    outline-offset: 2px;
+
+    span {
+      width: 24px;
+      height: 24px;
+      background: var(--c-bg-alt);
+      border-radius: inherit;
+      transform: scale(0.8);
+      transition: all 200ms ease-out;
+    }
+  }
+}
+
+.select {
+  position: relative;
+
+  select {
+    width: 100%;
+    text-transform: capitalize;
+    appearance: none;
+    padding-right: 2em;
+  }
+
+  .icon {
+    position: absolute;
+    top: calc(50% - 0.5em);
+    right: var(--s-sm);
+    pointer-events: none;
+    color: var(--c-input);
   }
 }
 </style>
