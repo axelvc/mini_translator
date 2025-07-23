@@ -1,17 +1,18 @@
-import { Settings } from '@/shared/store/settings'
+import { readonly, ref } from 'vue'
 import { TranslateResponse } from '@/shared/types/translation'
 import { getMessageError, translateMessage } from '@/shared/utils'
-import { readonly, ref } from 'vue'
+import { useSettings } from '@/shared/composables/useSettings'
 
 export function useTranslator() {
   const error = ref('')
   const res = ref<TranslateResponse | null>(null)
-  const settings = new Settings()
+  const { settings } = useSettings()
 
   async function getTranslation(input: string, from: string, to?: string) {
     if (!input) return null
 
-    const [target, second] = await Promise.all([settings.get('target_language'), settings.get('second_language')])
+    const target = settings.target_language
+    const second = settings.second_language
     const toLang = to || target
 
     return translateMessage({

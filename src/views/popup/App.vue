@@ -1,35 +1,36 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from 'vue'
-import { debouncedWatch } from '@vueuse/core'
+import { ref, reactive, watch } from 'vue'
+import { debouncedWatch, watchOnce } from '@vueuse/core'
 import browser from 'webextension-polyfill'
 
 import SettingsIcon from '@/shared/components/icons/SettingsIcon.svg'
 import VActions from './components/VActions/VActions.vue'
 import { LANGUAGES_ENTRIES } from '@/shared/utils'
-import { Settings } from '@/shared/store/settings'
 import { useTheme } from '@/shared/composables/useTheme'
 import { useTranslator } from './composables/useTranslator'
+import { useSettings } from '@/shared/composables/useSettings'
 
-const settings = new Settings()
-const inputFocus = ref(false)
 const input = reactive({ text: '', from: 'auto', to: '' })
+const inputFocus = ref(false)
 const { error, res, translate } = useTranslator()
+const { settings } = useSettings()
 
 useTheme()
+
+function openSettings() {
+  browser.runtime.openOptionsPage()
+}
 
 async function handleTranslate() {
   await translate(input.text, input.from, input.to)
   input.to = res.value?.outLang ?? ''
 }
 
-onMounted(async () => {
-  watch(() => [input.from, input.to], handleTranslate)
-  debouncedWatch(() => input.text, handleTranslate, { debounce: await settings.get('toolbar_delay') })
-})
-
-function openSettings() {
-  browser.runtime.openOptionsPage()
-}
+watch(() => [input.from, input.to], handleTranslate)
+watchOnce(
+  () => settings.toolbar_delay,
+  (debounce) => debouncedWatch(() => input.text, handleTranslate, { debounce }),
+)
 </script>
 
 <template>

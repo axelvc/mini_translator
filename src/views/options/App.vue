@@ -1,82 +1,72 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
+import { watch } from 'vue'
 import { clamp } from '@vueuse/core'
 
 import ChevronDownIcon from '@/shared/components/icons/ChevronDownIcon.svg'
-import { Settings, SettingsData } from '@/shared/store/settings'
 import { settingsDefinition } from './settings.definition'
+import { SettingId, useSettings } from '@/shared/composables/useSettings'
 import { useTheme } from '@/shared/composables/useTheme'
 
-const settings = new Settings()
-
-const loading = ref(true)
-const settingsData = reactive<Record<string, any>>({})
+const { settings, save } = useSettings()
 
 useTheme()
-watch(settingsData, () => settings.save(settingsData as SettingsData))
-onMounted(async () => {
-  Object.assign(settingsData, await settings.getAll())
-  loading.value = false
-})
+watch(settings, save)
 
-function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; max?: number; id: string }) {
+function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; max?: number; id: SettingId }) {
   const target = ev.target as HTMLInputElement
   const n = Number(target.value)
 
   min ??= n
   max ??= Math.max(n, min)
-
-  settingsData[id] = clamp(n, min, max)
+  ;(settings as any)[id] = clamp(n, min, max)
 }
 </script>
 <template>
   <main>
     <h1>Options</h1>
 
-    <template v-if="!loading">
-      <section v-for="category in settingsDefinition" :key="category.id">
-        <h2>{{ category.label }}</h2>
+    <section v-for="category in settingsDefinition" :key="category.id">
+      <h2>{{ category.label }}</h2>
 
-        <ul class="list">
-          <li v-for="option in category.settings" :key="option.id" class="option">
-            <label>
-              <span class="name">{{ option.label }}</span>
+      <ul class="list">
+        <li v-for="option in category.settings" :key="option.id" class="option">
+          <label>
+            <span class="name">{{ option.label }}</span>
 
-              <span v-if="option.type === 'select'" class="select">
-                <select v-model="settingsData[option.id]" class="input">
-                  <template v-if="Array.isArray(option.options[0])">
-                    <option v-for="[value, name] in option.options" :key="value" :value="value">{{ name }}</option>
-                  </template>
+            <span v-if="option.type === 'select'" class="select">
+              <select v-model="settings[option.id]" class="input">
+                <template v-if="Array.isArray(option.options[0])">
+                  <option v-for="[value, name] in option.options" :key="value" :value="value">{{ name }}</option>
+                </template>
 
-                  <template v-else>
-                    <option v-for="value in option.options" :key="value as string" :value="value">
-                      {{ value }}
-                    </option>
-                  </template>
-                </select>
+                <template v-else>
+                  <option v-for="value in option.options" :key="value as string" :value="value">
+                    {{ value }}
+                  </option>
+                </template>
+              </select>
 
-                <span class="icon">
-                  <ChevronDownIcon />
-                </span>
+              <span class="icon">
+                <ChevronDownIcon />
               </span>
+            </span>
 
-              <input
-                v-else-if="option.type === 'number'"
-                class="input"
-                type="number"
-                :value="settingsData[option.id]"
-                :min="option.min"
-                @change="handleInputNumberChange($event, option)"
-              />
-            </label>
+            <input
+              v-else-if="option.type === 'number'"
+              class="input"
+              type="number"
+              :value="settings[option.id]"
+              :min="option.min"
+              @change="handleInputNumberChange($event, option)"
+            />
+          </label>
 
-            <div v-if="'description' in option" class="description">
-              {{ option.description }}
-            </div>
-          </li>
-        </ul>
-      </section>
-    </template>
+          <div v-if="'description' in option" class="description">
+            {{ option.description }}
+          </div>
+        </li>
+      </ul>
+    </section>
   </main>
 </template>
 

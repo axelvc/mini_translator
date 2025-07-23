@@ -1,9 +1,10 @@
-import { Settings } from '@/shared/store/settings'
+import { useSettings } from './useSettings'
+import { watch } from 'vue'
 
 export function useTheme(root = document.documentElement) {
-  const settings = new Settings()
-
-  settings.listen('theme', (theme) => {
-    root.dataset.theme = theme
-  })
+  const { settings } = useSettings()
+  watch(
+    () => settings.theme,
+    (theme) => (root.dataset.theme = theme),
+  )
 }
