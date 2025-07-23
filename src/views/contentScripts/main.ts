@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
-import { App, createApp } from 'vue'
+import { App as Application, createApp } from 'vue'
 
-import ContentScripts from './ContentScripts.vue'
+import App from './App.vue'
 import { Settings } from '@/store/settings'
 import { sleep } from '@/utils'
 import { useTheme } from '@/composables/useTheme'
@@ -33,11 +33,11 @@ useTheme(root)
 shadow.append(root)
 
 /* -------------------------------- mount app ------------------------------- */
-let app: App<Element> | null = null
+let app: Application<Element> | null = null
 
 function mount(selectedText: string, x: number, y: number) {
   document.body.appendChild(container)
-  app = createApp(ContentScripts, { selectedText, x, y })
+  app = createApp(App, { selectedText, x, y })
   app.mount(root)
 }
 

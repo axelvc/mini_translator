@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import VPopup from './VPopup.vue'
+import App from './App.vue'
 import '@/style.scss'
 
-createApp(VPopup).mount('#app')
+createApp(App).mount('#app')

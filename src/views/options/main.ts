@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import Options from './VOptions.vue'
+import App from './App.vue'
 import '@/style.scss'
 
-createApp(Options).mount('#app')
+createApp(App).mount('#app')
