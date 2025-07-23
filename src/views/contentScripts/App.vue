@@ -4,10 +4,10 @@ import { watchOnce } from '@vueuse/core'
 import browser from 'webextension-polyfill'
 
 import VActions from '@/components/VActions/VActions.vue'
-import type { TranslateResponse } from '@/types/translation'
 import { Settings } from '@/store/settings'
 import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { getMessageError, LANGUAGES_ENTRIES, translateMessage } from '@/utils'
+import { LANGUAGES_ENTRIES } from '@/utils'
+import { useTranslator } from '@/composables/useTranslator'
 
 const p = defineProps({
   selectedText: {
@@ -76,49 +76,30 @@ watchOnce(translationBox, (box) => {
 
 /* ------------------------------- translation ------------------------------ */
 const languages = LANGUAGES_ENTRIES
-const translation = ref<TranslateResponse>({ text: '', srcLang: '', outLang: '' })
-const error = ref('')
+const { error, res, translate } = useTranslator()
 
-async function getTranslation() {
-  const userTarget = translation.value.outLang
-
-  // prefer language selected by the user
-  // only pass second if it's the first call
-  const langs = {
-    target: userTarget || (await settings.get('target_language')),
-    second: userTarget ? null : await settings.get('second_language'),
-  }
-
-  try {
-    translation.value = await translateMessage({
-      text: p.selectedText,
-      from: 'auto',
-      to: langs.target,
-      alternative: langs.second!,
-    })
-  } catch (e) {
-    error.value = getMessageError(e)
-  }
+async function handleTranslation() {
+  translate(p.selectedText, 'auto')
 }
 </script>
 
 <template>
-  <div v-if="translation.text || error" ref="translationBox" :class="s.translation" :style="{ maxHeight, maxWidth }">
-    <template v-if="translation.text">
+  <div v-if="res || error" ref="translationBox" :class="s.translation" :style="{ maxHeight, maxWidth }">
+    <template v-if="res">
       <VActions
-        v-model:lang="translation.outLang"
-        :text="translation.text"
+        v-model:lang="res.outLang"
+        :text="res.text"
         :languages="languages"
         lang-title="Language"
-        @update:lang="getTranslation"
+        @update:lang="handleTranslation"
       />
 
       <p :class="s.text">
-        {{ translation.text }}
+        {{ res.text }}
       </p>
 
-      <div v-if="translation.dict" :class="s.dict">
-        <template v-for="{ pos, terms } in translation.dict" :key="pos">
+      <div v-if="res.dict" :class="s.dict">
+        <template v-for="{ pos, terms } in res.dict" :key="pos">
           <span :class="s.pos">{{ pos }}:</span>
           <span>{{ terms.join(', ') }}</span>
         </template>
@@ -130,7 +111,7 @@ async function getTranslation() {
     </span>
   </div>
 
-  <img v-else ref="tooltipBox" :src="iconUrl" :class="s.tooltip" @click="getTranslation" />
+  <img v-else ref="tooltipBox" :src="iconUrl" :class="s.tooltip" @click="handleTranslation" />
 </template>
 
 <style lang="scss">
