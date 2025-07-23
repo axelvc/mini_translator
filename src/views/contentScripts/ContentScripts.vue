@@ -2,11 +2,12 @@
 import { ref } from 'vue'
 import { watchOnce } from '@vueuse/core'
 import browser from 'webextension-polyfill'
-import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
-import { getOption } from '@/store'
-import { getLanguages, getMessageError, translateMessage } from '@/utils'
-import type { TranslateResponse } from '@/types/translation'
+
 import VActions from '@/components/VActions/VActions.vue'
+import type { TranslateResponse } from '@/types/translation'
+import { Settings } from '@/store/settings'
+import { computePosition, flip, shift, offset, ReferenceElement, Placement } from '@floating-ui/dom'
+import { getMessageError, LANGUAGES_ENTRIES, translateMessage } from '@/utils'
 
 const p = defineProps({
   selectedText: {
@@ -23,6 +24,7 @@ const p = defineProps({
   },
 })
 
+const settings = new Settings()
 const tooltipBox = ref<HTMLDivElement>()
 const translationBox = ref<HTMLDivElement>()
 
@@ -30,28 +32,14 @@ const offsetSpace = 10
 const iconUrl = browser.runtime.getURL('icons/icon.svg')
 
 /* -------------------------------- settings -------------------------------- */
-const maxWidth = ref('auto')
-const maxHeight = ref('auto')
+const _maxWidth = await settings.get('floating_max_width')
+const _maxHeight = await settings.get('floating_max_height')
 
-getOption('floating_max_width')
-  .then((v) => (maxWidth.value = v ? `${v}px` : 'auto'))
-  .catch(() => {
-    // TODO: handle error
-  })
-getOption('floating_max_height')
-  .then((v) => (maxHeight.value = v ? `${v}px` : 'auto'))
-  .catch(() => {
-    // TODO: handle error
-  })
+const maxWidth = ref(_maxWidth ? `${_maxWidth}px` : 'auto')
+const maxHeight = ref(_maxHeight ? `${_maxHeight}px` : 'auto')
 
 /* -------------------------- update boxes position ------------------------- */
-const position = ref<Placement>('bottom')
-
-getOption('floating_position')
-  .then((v) => (position.value = v))
-  .catch(() => {
-    // TODO: handle error
-  })
+const position = ref<Placement>((await settings.get('floating_position')) as Placement)
 
 async function updateBoxPosition(reference: ReferenceElement, box: HTMLElement) {
   const { x, y } = await computePosition(reference, box, {
@@ -87,7 +75,7 @@ watchOnce(translationBox, (box) => {
 })
 
 /* ------------------------------- translation ------------------------------ */
-const languages = getLanguages()
+const languages = LANGUAGES_ENTRIES
 const translation = ref<TranslateResponse>({ text: '', srcLang: '', outLang: '' })
 const error = ref('')
 
@@ -97,8 +85,8 @@ async function getTranslation() {
   // prefer language selected by the user
   // only pass second if it's the first call
   const langs = {
-    target: userTarget || (await getOption('target_language')),
-    second: userTarget ? null : await getOption('second_language'),
+    target: userTarget || (await settings.get('target_language')),
+    second: userTarget ? null : await settings.get('second_language'),
   }
 
   try {
@@ -106,7 +94,7 @@ async function getTranslation() {
       text: p.selectedText,
       from: 'auto',
       to: langs.target,
-      alternative: langs.second,
+      alternative: langs.second!,
     })
   } catch (e) {
     error.value = getMessageError(e)

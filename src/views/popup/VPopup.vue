@@ -1,20 +1,25 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { debouncedWatch } from '@vueuse/core'
 import browser from 'webextension-polyfill'
-import { getOption } from '@/store'
-import { getLanguages, getMessageError, translateMessage } from '@/utils'
-import type { TranslateData, TranslateResponse } from '@/types/translation'
-import VActions from '@/components/VActions/VActions.vue'
-import SettingsIcon from '@/components/icons/SettingsIcon.svg'
 
+import SettingsIcon from '@/components/icons/SettingsIcon.svg'
+import VActions from '@/components/VActions/VActions.vue'
+import type { TranslateData, TranslateResponse } from '@/types/translation'
+import { LANGUAGES_ENTRIES, getMessageError, translateMessage } from '@/utils'
+import { Settings } from '@/store/settings'
+import { useTheme } from '@/composables/useTheme'
+
+const settings = new Settings()
 const inputFocus = ref(false)
-const languages = getLanguages()
+const languages = LANGUAGES_ENTRIES
 
 const input = reactive({ text: '', lang: 'auto' })
 const initialStateTranslation: TranslateResponse = { text: '', srcLang: '', outLang: '' }
 const translation = ref(initialStateTranslation)
 const error = ref('')
+
+useTheme()
 
 async function getTranslation() {
   error.value = ''
@@ -26,8 +31,8 @@ async function getTranslation() {
 
   const { outLang } = translation.value
   const langs = {
-    target: await getOption('target_language'),
-    second: await getOption('second_language'),
+    target: await settings.get('target_language'),
+    second: await settings.get('second_language'),
   }
 
   const data: TranslateData = {
@@ -51,11 +56,9 @@ async function getTranslation() {
   }
 }
 
-getOption('toolbar_delay')
-  .then((debounce) => debouncedWatch(() => input.text, getTranslation, { debounce }))
-  .catch(() => {
-    // TODO: handle error
-  })
+onMounted(async () => {
+  debouncedWatch(() => input.text, getTranslation, { debounce: await settings.get('toolbar_delay') })
+})
 
 function openSettings() {
   browser.runtime.openOptionsPage()
@@ -63,63 +66,65 @@ function openSettings() {
 </script>
 
 <template>
-  <main>
-    <div :class="['input', inputFocus && 'outline', s.input]">
-      <textarea
-        v-model="input.text"
-        :class="['no-outline', s.text]"
-        placeholder="Type something"
-        autofocus
-        @focus="inputFocus = true"
-        @blur="inputFocus = false"
-      />
+  <Suspense>
+    <main>
+      <div :class="['input', inputFocus && 'outline', s.input]">
+        <textarea
+          v-model="input.text"
+          :class="['no-outline', s.text]"
+          placeholder="Type something"
+          autofocus
+          @focus="inputFocus = true"
+          @blur="inputFocus = false"
+        />
 
-      <VActions
-        v-model:lang="input.lang"
-        :text="input.text"
-        :languages="[['auto', 'detect language'], ...languages]"
-        :voice-lang="translation.srcLang"
-        lang-title="From Language"
-        @update:lang="getTranslation"
-      />
-    </div>
-
-    <div v-if="translation.text" :class="s.output">
-      <VActions
-        v-model:lang="translation.outLang"
-        :text="translation.text"
-        :languages="languages"
-        lang-title="To Language"
-        @update:lang="getTranslation"
-      />
-
-      <p :class="s.text">
-        {{ translation.text }}
-      </p>
-
-      <div v-if="translation.dict?.length" :class="s.dict">
-        <template v-for="{ pos, terms } in translation.dict" :key="pos">
-          <span :class="s.pos">{{ pos }}:</span>
-          <span>{{ terms.join(', ') }}</span>
-        </template>
+        <VActions
+          v-model:lang="input.lang"
+          :text="input.text"
+          :languages="[['auto', 'detect language'], ...languages]"
+          :voice-lang="translation.srcLang"
+          lang-title="From Language"
+          @update:lang="getTranslation"
+        />
       </div>
-    </div>
 
-    <footer :class="s.footer">
-      <span v-if="error" class="error">{{ error }}</span>
+      <div v-if="translation.text" :class="s.output">
+        <VActions
+          v-model:lang="translation.outLang"
+          :text="translation.text"
+          :languages="languages"
+          lang-title="To Language"
+          @update:lang="getTranslation"
+        />
 
-      <span v-if="translation.text && translation.srcLang !== input.lang" :class="s.changeLanguage">
-        Translated from:
-        <button @click="input.lang = translation.srcLang">
-          {{ languages.find(([code]) => code === translation.srcLang)![1] }}
+        <p :class="s.text">
+          {{ translation.text }}
+        </p>
+
+        <div v-if="translation.dict?.length" :class="s.dict">
+          <template v-for="{ pos, terms } in translation.dict" :key="pos">
+            <span :class="s.pos">{{ pos }}:</span>
+            <span>{{ terms.join(', ') }}</span>
+          </template>
+        </div>
+      </div>
+
+      <footer :class="s.footer">
+        <span v-if="error" class="error">{{ error }}</span>
+
+        <span v-if="translation.text && translation.srcLang !== input.lang" :class="s.changeLanguage">
+          Translated from:
+          <button @click="input.lang = translation.srcLang">
+            {{ languages.find(([code]) => code === translation.srcLang)![1] }}
+          </button>
+        </span>
+
+        <button class="iconBtn" title="Settings" @click="openSettings">
+          <SettingsIcon class="icon" />
         </button>
-      </span>
-
-      <button class="iconBtn" title="Settings" @click="openSettings">
-        <SettingsIcon class="icon" />
-      </button>
-    </footer>
-  </main>
+      </footer>
+    </main>
+  </Suspense>
 </template>
 
 <style lang="scss" module="s">

@@ -1,30 +1,33 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { clamp } from '@vueuse/core'
+
 import VSelect from '@/components/VSelect.vue'
 import VSwitch from '@/components/VSwitch.vue'
-import { settingSchema, getSettings, saveSettings, Settings, OptionNumber } from '@/store'
+import { Settings, SettingsData } from '@/store/settings'
+import { settingsDefinition } from './settings.definition'
+import { useTheme } from '@/composables/useTheme'
+
+const settings = new Settings()
 
 const loading = ref(true)
-const settings = reactive<Settings>({} as Settings)
+const settingsData = reactive<Record<string, any>>({})
 
-getSettings()
-  .then((s) => {
-    loading.value = false
-    Object.assign(settings, s)
-  })
-  .catch(() => {
-    // TODO: handle error
-  })
+useTheme()
+watch(settingsData, () => settings.save(settingsData as SettingsData))
+onMounted(async () => {
+  Object.assign(settingsData, await settings.getAll())
+  loading.value = false
+})
 
-watch(settings, saveSettings)
+function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; max?: number; id: string }) {
+  const target = ev.target as HTMLInputElement
+  const n = Number(target.value)
 
-function handleInputNumberChange(ev: Event, { min, max, id }: OptionNumber) {
-  const n = Number((ev.target as HTMLInputElement).value)
   min ??= n
   max ??= Math.max(n, min)
 
-  settings[id] = clamp(n, min, max)
+  settingsData[id] = clamp(n, min, max)
 }
 </script>
 <template>
@@ -32,30 +35,31 @@ function handleInputNumberChange(ev: Event, { min, max, id }: OptionNumber) {
     <h1>Options</h1>
 
     <template v-if="!loading">
-      <section v-for="category in settingSchema" :key="category.id">
-        <h2>{{ category.name }}</h2>
+      <section v-for="category in settingsDefinition" :key="category.id">
+        <h2>{{ category.label }}</h2>
 
         <ul class="list">
-          <li v-for="option in category.children" :key="option.id" class="option">
+          <li v-for="option in category.settings" :key="option.id" class="option">
             <label :class="[option.type === 'boolean' && 'inline']">
               <span class="name">{{ option.label }}</span>
 
-              <VSwitch v-if="option.type === 'boolean'" v-model="settings[option.id]" />
-              <VSelect v-else-if="option.type === 'select'" v-model="settings[option.id]" :options="option.options" />
+              <VSwitch v-if="option.type === 'boolean'" v-model="settingsData[option.id]" />
+              <VSelect
+                v-else-if="option.type === 'select'"
+                v-model="settingsData[option.id]"
+                :options="option.options"
+              />
               <input
                 v-else-if="option.type === 'number'"
-                :value="settings[option.id]"
-                :max="option.max"
+                :value="settingsData[option.id]"
                 :min="option.min"
                 type="number"
                 class="input"
                 @change="handleInputNumberChange($event, option)"
               />
-              <textarea v-else-if="option.multiline" v-model="settings[option.id]" class="input" />
-              <input v-else v-model="settings[option.id]" type="text" class="input" />
             </label>
 
-            <div v-if="option.description" class="description">
+            <div v-if="'description' in option" class="description">
               {{ option.description }}
             </div>
           </li>

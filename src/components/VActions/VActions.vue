@@ -13,7 +13,7 @@ defineProps({
     required: true,
   },
   languages: {
-    type: Array as PropType<[string, string][]>,
+    type: Array as PropType<readonly [string, string][]>,
     required: true,
   },
   langTitle: {

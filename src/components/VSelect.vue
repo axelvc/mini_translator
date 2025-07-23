@@ -8,7 +8,7 @@ const p = defineProps({
     default: '',
   },
   options: {
-    type: Array as PropType<string[] | [string, string][]>,
+    type: Array as PropType<readonly any[] | [any, any][]>,
     required: true,
   },
   id: {
@@ -34,7 +34,7 @@ const emit = defineEmits<{
       </template>
 
       <template v-else>
-        <option v-for="option in p.options" :key="(option as string)" :value="option">
+        <option v-for="option in p.options" :key="option as string" :value="option">
           {{ option }}
         </option>
       </template>

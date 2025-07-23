@@ -1,10 +1,9 @@
-import { getOption, listenOption } from '@/store'
+import { Settings } from '@/store/settings'
 
 export function useTheme(root = document.documentElement) {
-  function handleChange(theme: string) {
-    root.dataset.theme = theme
-  }
+  const settings = new Settings()
 
-  getOption('theme').then(handleChange)
-  listenOption('theme', handleChange)
+  settings.listen('theme', (theme) => {
+    root.dataset.theme = theme
+  })
 }

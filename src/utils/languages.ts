@@ -5,7 +5,7 @@ const enum DefaultLangs {
   Second = 'es',
 }
 
-const languages = new Map([
+const LANGUAGES = new Map([
   ['af', 'Afrikaans'],
   ['sq', 'Albanian'],
   ['am', 'Amharic'],
@@ -117,13 +117,15 @@ const languages = new Map([
   ['zu', 'Zulu'],
 ])
 
+export const LANGUAGES_ENTRIES = [...LANGUAGES.entries()] as const
+
 export function getMainLang(): string {
   const lang = browser.i18n.getUILanguage()
-  if (languages.has(lang)) return lang
+  if (LANGUAGES.has(lang)) return lang
 
   // remove second part of language (e.g. en-US -> en)
-  const half = lang.substring(0, 2)
-  if (languages.has(half)) return half
+  const half = lang.split('-')[0]
+  if (LANGUAGES.has(half)) return half
 
   return DefaultLangs.Main
 }
@@ -134,8 +136,4 @@ export function getSecondLang(): string {
   }
 
   return DefaultLangs.Second
-}
-
-export function getLanguages() {
-  return [...languages.entries()]
 }

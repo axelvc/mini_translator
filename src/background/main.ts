@@ -1,12 +1,7 @@
 import browser from 'webextension-polyfill'
-import { setupSettings } from '@/store'
 import { GoogleTranslator } from '@/services/translation'
 
 const translator = new GoogleTranslator()
-
-browser.runtime.onInstalled.addListener(async () => {
-  await setupSettings()
-})
 
 if (__DEV__) {
   browser.webNavigation.onCommitted.addListener(({ tabId, frameId, url }) => {

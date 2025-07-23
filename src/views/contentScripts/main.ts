@@ -1,11 +1,13 @@
 import browser from 'webextension-polyfill'
 import { App, createApp } from 'vue'
+
 import ContentScripts from './ContentScripts.vue'
+import { Settings } from '@/store/settings'
 import { sleep } from '@/utils'
 import { useTheme } from '@/composables/useTheme'
-import { getOption, listenOption } from '@/store'
 
 /* ---------------------------------- setup --------------------------------- */
+const settings = new Settings()
 const container = document.createElement('div')
 const shadow = container.attachShadow({ mode: 'closed' })
 
@@ -18,6 +20,7 @@ shadow.append(style)
 
 // mount root
 const root = document.createElement('div')
+root.classList.add('root')
 
 // to avoid flicker when mounted
 Object.assign(root.style, {
@@ -25,7 +28,8 @@ Object.assign(root.style, {
   width: 0,
   height: 0,
 })
-root.classList.add('root')
+
+useTheme(root)
 shadow.append(root)
 
 /* -------------------------------- mount app ------------------------------- */
@@ -54,8 +58,8 @@ async function handleMount(ev: MouseEvent) {
   unmount()
 
   // omit if tab language is same as main language
-  const omitInMainLang = await getOption('floating_omit_main')
-  const mainLang = await getOption('target_language')
+  const omitInMainLang = await settings.get('floating_omit_main')
+  const mainLang = await settings.get('target_language')
   const tabLang = document.documentElement.lang
   if (omitInMainLang && mainLang === tabLang) return
 
@@ -72,10 +76,4 @@ function handleEnableSelection(enabled: boolean) {
   document.removeEventListener('mouseup', handleMount)
 }
 
-getOption('floating_enabled')
-  .then(handleEnableSelection)
-  .catch(() => {
-    // TODO: handle error
-  })
-listenOption('floating_enabled', handleEnableSelection)
-useTheme(root)
+settings.listen('floating_enabled', handleEnableSelection)
