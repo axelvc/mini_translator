@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
 import ClipboardIcon from '@/shared/components/icons/ClipboardIcon.svg'
+import { useI18n } from '@/shared/composables/useI18n'
+
+const { t } = useI18n()
 
 const p = defineProps({
   text: {
@@ -13,7 +16,7 @@ const { copy, copied } = useClipboard()
 </script>
 
 <template>
-  <button v-bind="$attrs" title="Copy to clipboard" :class="['iconBtn', s.btn]" @click="p.text && copy(p.text)">
+  <button v-bind="$attrs" :title="t('copy_clipboard')" :class="['iconBtn', s.btn]" @click="p.text && copy(p.text)">
     <ClipboardIcon class="icon" />
 
     <span v-if="copied" :class="s.copied">Text copied</span>

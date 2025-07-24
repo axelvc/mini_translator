@@ -5,6 +5,7 @@ import { audioUrlMessage, getMessageError } from '@/shared/utils'
 import VolumeOnIcon from '@/shared/components/icons/VolumeOnIcon.svg'
 import VolumeOffIcon from '@/shared/components/icons/VolumeOffIcon.svg'
 import { computePosition, flip, offset, shift } from '@floating-ui/dom'
+import { useI18n } from '@/shared/composables/useI18n'
 
 const p = defineProps({
   text: {
@@ -20,6 +21,7 @@ const p = defineProps({
 const audio = new Audio()
 const bus = useEventBus('audio')
 const [active, setActive] = useToggle()
+const { t } = useI18n()
 
 /* ------------------------------ handle error ------------------------------ */
 const audioBox = ref<HTMLElement>()
@@ -106,7 +108,7 @@ function handleClick() {
 </script>
 
 <template>
-  <button ref="audioBox" title="Listen" :class="['iconBtn', s.btn, active && s.active]" @click="handleClick">
+  <button ref="audioBox" :title="t('play_audio')" :class="['iconBtn', s.btn, active && s.active]" @click="handleClick">
     <VolumeOffIcon v-if="active" class="icon" />
     <VolumeOnIcon v-else class="icon" />
 

@@ -9,11 +9,13 @@ import { LANGUAGES_ENTRIES } from '@/shared/utils'
 import { useTheme } from '@/shared/composables/useTheme'
 import { useTranslator } from './composables/useTranslator'
 import { useSettings } from '@/shared/composables/useSettings'
+import { useI18n } from '@/shared/composables/useI18n'
 
 const input = reactive({ text: '', from: 'auto', to: '' })
 const inputFocus = ref(false)
 const { error, res, translate } = useTranslator()
 const { settings, loaded } = useSettings()
+const { t } = useI18n()
 
 useTheme()
 
@@ -46,7 +48,7 @@ watchOnce(loaded, async () => {
       <textarea
         v-model="input.text"
         autofocus
-        placeholder="Type something"
+        :placeholder="t('popup_type_placeholder')"
         :class="['no-outline', s.text]"
         @focus="inputFocus = true"
         @blur="inputFocus = false"
@@ -54,15 +56,20 @@ watchOnce(loaded, async () => {
 
       <VActions
         v-model:lang="input.from"
-        lang-title="From Language"
+        :lang-title="t('select_from_language')"
         :text="input.text"
         :voice-lang="res?.srcLang"
-        :languages="[['auto', 'detect language'], ...LANGUAGES_ENTRIES]"
+        :languages="[['auto', t('select_from_language_option_auto')], ...LANGUAGES_ENTRIES]"
       />
     </div>
 
     <div v-if="res" :class="s.output">
-      <VActions v-model:lang="input.to" lang-title="To Language" :text="res.text" :languages="LANGUAGES_ENTRIES" />
+      <VActions
+        v-model:lang="input.to"
+        :lang-title="t('select_to_language')"
+        :text="res.text"
+        :languages="LANGUAGES_ENTRIES"
+      />
 
       <p :class="s.text">
         {{ res.text }}
@@ -80,13 +87,13 @@ watchOnce(loaded, async () => {
       <span v-if="error" class="error">{{ error }}</span>
 
       <span v-if="res && res.srcLang !== input.from" :class="s.changeLanguage">
-        Translated from:
+        {{ t('translated_from') }}:
         <button @click="input.from = res.srcLang">
           {{ LANGUAGES_ENTRIES.find(([code]) => code === res!.srcLang)![1] }}
         </button>
       </span>
 
-      <button class="iconBtn" title="Settings" @click="openSettings">
+      <button class="iconBtn" :title="t('settings')" @click="openSettings">
         <SettingsIcon class="icon" />
       </button>
     </footer>

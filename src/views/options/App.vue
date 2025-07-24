@@ -6,7 +6,9 @@ import ChevronDownIcon from '@/shared/components/icons/ChevronDownIcon.svg'
 import { settingsDefinition } from './settings.definition'
 import { SettingId, useSettings } from '@/shared/composables/useSettings'
 import { useTheme } from '@/shared/composables/useTheme'
+import { useI18n } from '@/shared/composables/useI18n'
 
+const { t } = useI18n()
 const { settings, save, loaded } = useSettings()
 
 useTheme()
@@ -23,7 +25,7 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 </script>
 <template>
   <main v-if="loaded">
-    <h1>Options</h1>
+    <h1>{{ t('settings') }}</h1>
 
     <section v-for="category in settingsDefinition" :key="category.id">
       <h2>{{ category.label }}</h2>
@@ -39,17 +41,9 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 
           <div v-if="option.type === 'select'" class="select">
             <select v-model="settings[option.id]" class="input">
-              <template v-if="Array.isArray(option.options[0])">
-                <option v-for="[value, name] in option.options" :key="value.toString()" :value="value">
-                  {{ name }}
-                </option>
-              </template>
-
-              <template v-else>
-                <option v-for="value in option.options" :key="value as string" :value="value">
-                  {{ value }}
-                </option>
-              </template>
+              <option v-for="[value, name] in option.options" :key="value.toString()" :value="value">
+                {{ name }}
+              </option>
             </select>
 
             <span class="icon">

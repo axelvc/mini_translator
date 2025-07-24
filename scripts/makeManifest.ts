@@ -10,9 +10,10 @@ export default async function makeManifest({ version }: { version: number }) {
 
   const manifest: Manifest.WebExtensionManifest = {
     manifest_version: 2,
+    default_locale: 'en',
     version: pkg.version,
     name: pkg.visualName,
-    description: pkg.description,
+    description: '__MSG_extension_description__',
     icons: {
       16: 'icons/icon16.png',
       32: 'icons/icon32.png',
