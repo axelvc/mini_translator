@@ -3,10 +3,10 @@ import { watch } from 'vue'
 import { clamp } from '@vueuse/core'
 
 import ChevronDownIcon from '@/shared/components/icons/ChevronDownIcon.svg'
-import { settingsDefinition } from './settings.definition'
 import { SettingId, useSettings } from '@/shared/composables/useSettings'
-import { useTheme } from '@/shared/composables/useTheme'
+import { settingsDefinition } from './settings.definition'
 import { useI18n } from '@/shared/composables/useI18n'
+import { useTheme } from '@/shared/composables/useTheme'
 
 const { t } = useI18n()
 const { settings, save, loaded } = useSettings()

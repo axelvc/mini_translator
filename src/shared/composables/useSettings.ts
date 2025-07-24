@@ -1,6 +1,6 @@
 import { reactive, readonly, ref } from 'vue'
 import browser from 'webextension-polyfill'
-import { getMainLang, getSecondLang } from '@/shared/utils'
+import { getMainLang, getSecondLang } from '@/shared/utils/languages'
 
 export type Settings = typeof DEFAULT_SETTINGS
 export type SettingId = keyof Settings

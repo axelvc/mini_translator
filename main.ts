@@ -2,11 +2,11 @@ import fs from 'fs-extra'
 import ora from 'ora'
 import chokidar from 'chokidar'
 import { globby } from 'globby'
-import { isDev, outDir, root } from './vite.config'
-import buildBackground from './scripts/buildBackground'
+import config, { isDev, outDir, root } from './vite.config'
 import stubHtml from './scripts/stubHtml'
 import makeManifest from './scripts/makeManifest'
 import makeZip from './scripts/makeZip'
+import { build } from 'vite'
 
 async function cleanBuild() {
   const files = await globby(`${outDir}/*`, {
@@ -14,13 +14,12 @@ async function cleanBuild() {
     ignore: ['**/*.zip'],
   })
 
-  await Promise.all(files.map(file => fs.remove(file)))
+  await Promise.all(files.map((file) => fs.remove(file)))
 }
 
 ;(async () => {
   if (isDev) {
-    await buildBackground()
-
+    await build(config)
     await stubHtml()
     chokidar.watch(`${root}/**/*.html`).on('change', stubHtml)
 
@@ -31,10 +30,6 @@ async function cleanBuild() {
   }
 
   const spinner = ora()
-
-  spinner.start('Building background')
-  await buildBackground()
-  spinner.succeed()
 
   spinner.start('Compressing to zip (manifest v2)')
   await makeManifest({ version: 2 })

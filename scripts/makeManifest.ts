@@ -24,9 +24,6 @@ export default async function makeManifest({ version }: { version: number }) {
       page: 'views/options/index.html',
       open_in_tab: true,
     },
-    background: {
-      scripts: ['background/main.js'],
-    },
     browser_action: {
       default_popup: 'views/popup/index.html',
     },
@@ -54,9 +51,6 @@ export default async function makeManifest({ version }: { version: number }) {
       permissions,
       host_permissions,
       action: manifest.browser_action,
-      background: {
-        service_worker: manifest.background.scripts![0],
-      },
       content_security_policy: {
         extension_pages: manifest.content_security_policy as string,
       },

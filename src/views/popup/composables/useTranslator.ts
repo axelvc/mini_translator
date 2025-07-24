@@ -1,7 +1,9 @@
 import { readonly, ref } from 'vue'
+import { GoogleTranslator } from '@/shared/utils/translation'
 import { TranslateResponse } from '@/shared/types/translation'
-import { getMessageError, translateMessage } from '@/shared/utils'
 import { useSettings } from '@/shared/composables/useSettings'
+
+const translator = new GoogleTranslator()
 
 export function useTranslator() {
   const error = ref('')
@@ -15,12 +17,28 @@ export function useTranslator() {
     const second = settings.second_language
     const toLang = to || target
 
-    return translateMessage({
-      text: input,
+    return translator.translate({
+      text: input.trim(),
       from,
       to: toLang,
       alternative: toLang === target ? second : target,
     })
+  }
+
+  function formatError(e: unknown): string {
+    const isError = e instanceof Error
+
+    if (isError) {
+      if (e.message === 'Failed to fetch') {
+        return 'Error: Unable to connect to the server'
+      }
+
+      if (e.message.startsWith('Server')) {
+        return e.message
+      }
+    }
+
+    return 'Error: Unknown error'
   }
 
   async function translate(input: string, from: string, to?: string) {
@@ -30,13 +48,19 @@ export function useTranslator() {
       res.value = await getTranslation(input, from, to)
     } catch (e) {
       res.value = null
-      error.value = getMessageError(e)
+      error.value = formatError(e)
     }
   }
 
+  async function getAudio(text: string, lang: string) {
+    text = text.trim()
+    return translator.audio({ text, lang })
+  }
+
   return {
-    error: readonly(error),
+    error: error,
     res: readonly(res),
     translate,
+    getAudio,
   }
 }

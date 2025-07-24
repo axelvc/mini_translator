@@ -5,7 +5,7 @@ import browser from 'webextension-polyfill'
 
 import SettingsIcon from '@/shared/components/icons/SettingsIcon.svg'
 import VActions from './components/VActions/VActions.vue'
-import { LANGUAGES_ENTRIES } from '@/shared/utils'
+import { LANGUAGES_ENTRIES } from '@/shared/utils/languages'
 import { useTheme } from '@/shared/composables/useTheme'
 import { useTranslator } from './composables/useTranslator'
 import { useSettings } from '@/shared/composables/useSettings'

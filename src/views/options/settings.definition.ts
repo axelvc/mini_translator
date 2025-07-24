@@ -1,5 +1,5 @@
 import { useI18n } from '@/shared/composables/useI18n'
-import { LANGUAGES_ENTRIES } from '@/shared/utils'
+import { LANGUAGES_ENTRIES } from '@/shared/utils/languages'
 
 const { t } = useI18n()
 

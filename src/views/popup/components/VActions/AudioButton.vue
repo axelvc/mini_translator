@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useEventBus, useToggle, whenever, useTimeoutFn, useEventListener } from '@vueuse/core'
-import { audioUrlMessage, getMessageError } from '@/shared/utils'
-import VolumeOnIcon from '@/shared/components/icons/VolumeOnIcon.svg'
-import VolumeOffIcon from '@/shared/components/icons/VolumeOffIcon.svg'
 import { computePosition, flip, offset, shift } from '@floating-ui/dom'
+import { useEventBus, useToggle, whenever, useTimeoutFn, useEventListener } from '@vueuse/core'
+
+import VolumeOffIcon from '@/shared/components/icons/VolumeOffIcon.svg'
+import VolumeOnIcon from '@/shared/components/icons/VolumeOnIcon.svg'
 import { useI18n } from '@/shared/composables/useI18n'
+import { useTranslator } from '@/views/popup/composables/useTranslator'
 
 const p = defineProps({
   text: {
@@ -20,44 +21,44 @@ const p = defineProps({
 
 const audio = new Audio()
 const bus = useEventBus('audio')
-const [active, setActive] = useToggle()
+const { getAudio, error } = useTranslator()
+const [playing, setPlaying] = useToggle()
 const { t } = useI18n()
 
 /* ------------------------------ handle error ------------------------------ */
 const audioBox = ref<HTMLElement>()
 const errorBox = ref<HTMLElement>()
-const error = ref('')
 
-whenever(errorBox, async (errorBox) => {
+whenever(errorBox, async () => {
+  setPlaying(false)
+  await showPopup()
+  clearError()
+})
+
+async function showPopup() {
   const offsetSpace = 5
+  const box = audioBox.value!
 
-  const { x, y } = await computePosition(audioBox.value!, errorBox, {
+  const { x, y } = await computePosition(audioBox.value!, box, {
     placement: 'bottom-end',
     middleware: [flip(), shift({ padding: offsetSpace }), offset(offsetSpace)],
   })
 
-  errorBox.style.setProperty('left', `${x}px`)
-  errorBox.style.setProperty('top', `${y}px`)
-})
+  box.style.setProperty('left', `${x}px`)
+  box.style.setProperty('top', `${y}px`)
+}
 
-function handleError(e: unknown) {
-  error.value = getMessageError(e)
-  setActive(false)
+function clearError() {
+  const clear = () => (error.value = '')
+  const { start, stop } = useTimeoutFn(clear, 2000)
 
-  // timeout to remove error message
-  const { start: startTimeout, stop: stopTimeout } = useTimeoutFn(() => {
-    error.value = ''
-  }, 2000)
-
-  startTimeout()
-
-  // remove message when user click
+  start()
   useEventListener(
     document.body,
     'click',
     () => {
-      stopTimeout()
-      error.value = ''
+      stop()
+      clear()
     },
     { once: true },
   )
@@ -65,27 +66,19 @@ function handleError(e: unknown) {
 
 /* -------------------------------- controls -------------------------------- */
 async function play() {
-  // stop another audios
-  bus.emit()
-
-  setActive(true)
+  bus.emit() // stop another audios
+  setPlaying(true)
 
   try {
-    audio.src ||= await audioUrlMessage(p.text, p.lang) // only download if needed
-
-    // only play if no another audio is playing
-    if (active.value) {
-      audio.play()
-    }
-  } catch (e) {
-    handleError(e)
-  }
+    audio.src ||= await getAudio(p.text, p.lang)
+    audio.play()
+  } catch {}
 }
 
 function stop() {
-  if (!active.value) return
+  if (!playing.value) return
 
-  setActive(false)
+  setPlaying(false)
   audio.pause()
   audio.currentTime = 0
 }
@@ -99,7 +92,7 @@ watch(p, () => audio.removeAttribute('src'))
 function handleClick() {
   if (!p.text || p.lang === 'auto') return
 
-  if (active.value) {
+  if (playing.value) {
     stop()
   } else {
     play()
@@ -108,8 +101,8 @@ function handleClick() {
 </script>
 
 <template>
-  <button ref="audioBox" :title="t('play_audio')" :class="['iconBtn', s.btn, active && s.active]" @click="handleClick">
-    <VolumeOffIcon v-if="active" class="icon" />
+  <button ref="audioBox" :title="t('play_audio')" :class="['iconBtn', s.btn, playing && s.active]" @click="handleClick">
+    <VolumeOffIcon v-if="playing" class="icon" />
     <VolumeOnIcon v-else class="icon" />
 
     <span v-if="error" ref="errorBox" :class="['error', s.error]">{{ error }}</span>
