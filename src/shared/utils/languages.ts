@@ -118,9 +118,9 @@ export const LANGUAGES_ENTRIES = [
   ['yi', t('lang_yi')],
   ['yo', t('lang_yo')],
   ['zu', t('lang_zu')],
-].sort((a, b) => a[1].localeCompare(b[1]))
+].sort((a, b) => a[1].localeCompare(b[1])) as [string, string][]
 
-const LANGUAGES = new Map(LANGUAGES_ENTRIES as [string, string][])
+const LANGUAGES = new Map(LANGUAGES_ENTRIES)
 
 export function getMainLang(): string {
   const lang = browser.i18n.getUILanguage()
