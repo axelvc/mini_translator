@@ -4,12 +4,12 @@ import { debouncedWatch, watchOnce } from '@vueuse/core'
 import browser from 'webextension-polyfill'
 
 import SettingsIcon from '@/shared/components/icons/SettingsIcon.svg'
-import VActions from './components/VActions/VActions.vue'
+import VActions from '@/views/popup/components/VActions.vue'
 import { LANGUAGES_ENTRIES } from '@/shared/utils/languages'
+import { useI18n } from '@/shared/composables/useI18n'
+import { useSettings } from '@/shared/composables/useSettings'
 import { useTheme } from '@/shared/composables/useTheme'
 import { useTranslator } from './composables/useTranslator'
-import { useSettings } from '@/shared/composables/useSettings'
-import { useI18n } from '@/shared/composables/useI18n'
 
 const input = reactive({ text: '', from: 'auto', to: '' })
 const inputFocus = ref(false)
