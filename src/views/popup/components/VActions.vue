@@ -5,7 +5,7 @@ import ClipboardIcon from '@/shared/components/icons/ClipboardIcon.svg'
 import VolumeOffIcon from '@/shared/components/icons/VolumeOffIcon.svg'
 import VolumeOnIcon from '@/shared/components/icons/VolumeOnIcon.svg'
 import { useAudioPlayer } from '@/views/popup/composables/useAudioPlayer'
-import { useClipboard } from '@vueuse/core'
+import { useClipboard, whenever } from '@vueuse/core'
 import { useI18n } from '@/shared/composables/useI18n'
 
 const p = defineProps({
@@ -46,6 +46,11 @@ function handleClickAudio() {
     play(p.text, p.voiceLang || p.lang)
   }
 }
+
+whenever(error, () => {
+  const id = setTimeout(() => (error.value = ''), 2000)
+  return () => clearTimeout(id)
+})
 </script>
 
 <template>
