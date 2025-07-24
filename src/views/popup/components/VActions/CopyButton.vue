@@ -16,7 +16,13 @@ const { copy, copied } = useClipboard()
 </script>
 
 <template>
-  <button v-bind="$attrs" :title="t('copy_clipboard')" :class="['iconBtn', s.btn]" @click="p.text && copy(p.text)">
+  <button
+    v-bind="$attrs"
+    :title="t('copy_clipboard')"
+    :class="['iconBtn', s.btn]"
+    :disabled="!p.text"
+    @click="p.text && copy(p.text)"
+  >
     <ClipboardIcon class="icon" />
 
     <span v-if="copied" :class="s.copied">Text copied</span>

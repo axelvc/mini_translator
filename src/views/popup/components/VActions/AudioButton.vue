@@ -101,7 +101,13 @@ function handleClick() {
 </script>
 
 <template>
-  <button ref="audioBox" :title="t('play_audio')" :class="['iconBtn', s.btn, playing && s.active]" @click="handleClick">
+  <button
+    ref="audioBox"
+    :title="t('play_audio')"
+    :class="['iconBtn', s.btn, playing && s.active]"
+    :disabled="!p.text"
+    @click="handleClick"
+  >
     <VolumeOffIcon v-if="playing" class="icon" />
     <VolumeOnIcon v-else class="icon" />
 
