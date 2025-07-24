@@ -32,6 +32,14 @@ export default async function makeManifest({ version }: { version: number }) {
     permissions: [...permissions, ...host_permissions],
     web_accessible_resources: ['icons/*'],
     content_security_policy: `script-src 'self'; object-src 'self'`,
+    commands: {
+      _execute_browser_action: {
+        description: 'Start the extension',
+        suggested_key: {
+          default: 'Alt+Shift+T',
+        },
+      },
+    },
   }
 
   if (isDev) {
@@ -57,6 +65,11 @@ export default async function makeManifest({ version }: { version: number }) {
           resources: manifest.web_accessible_resources as string[],
         },
       ],
+      commands: {
+        _execute_action: {
+          ...manifest.commands._execute_browser_action,
+        },
+      },
     })
 
     delete manifest.browser_action
