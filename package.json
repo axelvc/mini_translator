@@ -22,7 +22,6 @@
     ]
   },
   "dependencies": {
-    "@floating-ui/dom": "^1.7.2",
     "@vueuse/core": "^13.5.0",
     "vue": "^3.5.17",
     "webextension-polyfill": "^0.12.0"

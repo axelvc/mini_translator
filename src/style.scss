@@ -19,14 +19,13 @@
   --c-error: #be0e23;
 }
 
-:root,
-.root {
+:root {
   // [s]pace
-  --s-xl: 32px;
-  --s-lg: 24px;
-  --s-md: 16px;
-  --s-sm: 8px;
-  --s-xs: 4px;
+  --s-xl: 2rem;
+  --s-lg: 1.5rem;
+  --s-md: 1rem;
+  --s-sm: 0.5rem;
+  --s-xs: 0.25rem;
 
   --rounded: 8px;
   --rounded-sm: 4px;
@@ -54,8 +53,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
   background: var(--c-input-alt);
 
   &-thumb {
@@ -84,8 +83,7 @@
   }
 }
 
-body,
-:host .root {
+body {
   color: var(--c-fg);
   background: var(--c-bg);
   font-family: 'Inter', system-ui, sans-serif;
@@ -101,12 +99,9 @@ select {
   font: inherit;
 }
 
-input,
-textarea {
-  &::placeholder {
-    color: var(--c-input);
-    user-select: none;
-  }
+:is(input, textarea)::placeholder {
+  color: var(--c-input);
+  user-select: none;
 }
 
 :is(button, select):enabled {
@@ -123,12 +118,11 @@ textarea {
   height: 1em;
   width: 1em;
 }
-
-.iconBtn {
+.icon-btn {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   color: var(--c-input);
   border-radius: var(--rounded-sm);
   font-size: 20px;
@@ -137,15 +131,10 @@ textarea {
   &:hover:enabled {
     color: var(--c-accent);
   }
-
-  > svg {
-    @extend .icon;
-  }
 }
 
 .error {
   padding: var(--s-xs) var(--s-xs);
-  // line-height: 160%;
   color: #fff;
   background: var(--c-error);
   border-radius: var(--rounded-sm);

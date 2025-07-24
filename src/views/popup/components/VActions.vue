@@ -61,7 +61,12 @@ function handleClickAudio() {
       </option>
     </select>
 
-    <button :disabled="!text" :title="t('copy_clipboard')" :class="['iconBtn', s.copy]" @click="p.text && copy(p.text)">
+    <button
+      :disabled="!text"
+      :title="t('copy_clipboard')"
+      :class="['icon-btn', s.copy]"
+      @click="p.text && copy(p.text)"
+    >
       <ClipboardIcon class="icon" />
       <span v-if="copied" :class="s.copied">Text copied</span>
     </button>
@@ -70,7 +75,7 @@ function handleClickAudio() {
       ref="audioBox"
       :disabled="!text"
       :title="t('play_audio')"
-      :class="['iconBtn', s.audio, playing && s.active]"
+      :class="['icon-btn', s.audio, playing && s.active]"
       @click="p.text && handleClickAudio()"
     >
       <VolumeOffIcon v-if="playing" class="icon" />
@@ -136,6 +141,9 @@ function handleClickAudio() {
 
   .error {
     position: absolute;
+    margin: var(--s-xs);
+    top: 100%;
+    right: 0;
     white-space: nowrap;
     font-size: 0.875rem;
   }

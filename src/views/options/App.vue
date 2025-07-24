@@ -46,9 +46,7 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
               </option>
             </select>
 
-            <span class="icon">
-              <ChevronDownIcon />
-            </span>
+            <ChevronDownIcon class="icon" />
           </div>
 
           <div v-else-if="option.type === 'boolean'" class="boolean">
@@ -77,25 +75,29 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 main {
   display: grid;
   gap: var(--s-xl);
-  max-width: 400px;
-  margin: 48px 128px;
-  font-size: 16px;
+  margin: 3rem 8rem;
+  max-width: 25rem;
+  font-size: 1rem;
 }
 
 h1 {
-  font-size: 48px;
-  text-transform: capitalize;
+  font-size: 3rem;
 }
 
 h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
+}
+
+h1,
+h2,
+select {
   text-transform: capitalize;
 }
 
 input[type='number'] {
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
-    padding: 2px;
+    padding: 0.25rem;
   }
 
   -moz-appearance: textfield;
@@ -104,11 +106,6 @@ input[type='number'] {
   &:hover {
     -moz-appearance: auto;
   }
-}
-
-textarea {
-  height: 128px;
-  resize: vertical;
 }
 
 section {
@@ -135,9 +132,9 @@ section {
     top: 0;
     bottom: 0;
     left: 0;
-    width: 5px;
+    width: 0.375rem;
     background: var(--c-input-alt);
-    border-radius: 99em;
+    border-radius: 9em;
   }
 }
 
@@ -152,13 +149,13 @@ section {
 
   .name {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.875rem;
     color: var(--c-fg);
   }
 
   .description {
     color: var(--c-fg-alt);
-    font-size: 14px;
+    font-size: 0.875rem;
     text-wrap: pretty;
   }
 }
@@ -207,16 +204,16 @@ section {
   .switch {
     float: right;
     display: flex;
-    width: 40px;
-    height: 24px;
-    border-radius: 99em;
+    width: 2.5rem;
+    height: 1.5rem;
+    border-radius: 9em;
     background: var(--c-input-alt);
     cursor: pointer;
     outline-offset: 2px;
 
     span {
-      width: 24px;
-      height: 24px;
+      width: 1.5rem;
+      height: 1.5rem;
       background: var(--c-bg-alt);
       border-radius: inherit;
       transform: scale(0.8);

@@ -44,12 +44,12 @@ watchOnce(loaded, async () => {
 
 <template>
   <main>
-    <div :class="['input', s.input, inputFocus && 'outline']">
+    <div :class="['input', inputFocus && 'outline']">
       <textarea
         v-model="input.text"
         autofocus
+        class="no-outline text"
         :placeholder="t('popup_type_placeholder')"
-        :class="['no-outline', s.text]"
         @focus="inputFocus = true"
         @blur="inputFocus = false"
       />
@@ -63,7 +63,7 @@ watchOnce(loaded, async () => {
       />
     </div>
 
-    <div v-if="res" :class="s.output">
+    <div v-if="res" class="output">
       <VActions
         v-model:lang="input.to"
         :lang-title="t('select_to_language')"
@@ -71,39 +71,39 @@ watchOnce(loaded, async () => {
         :languages="LANGUAGES_ENTRIES"
       />
 
-      <p :class="s.text">
+      <p class="text">
         {{ res.text }}
       </p>
 
-      <div v-if="res.dict?.length" :class="s.dict">
+      <div v-if="res.dict?.length" class="dict">
         <template v-for="{ pos, terms } in res.dict" :key="pos">
-          <span :class="s.pos">{{ pos }}:</span>
+          <span class="pos">{{ pos }}:</span>
           <span>{{ terms.join(', ') }}</span>
         </template>
       </div>
     </div>
 
-    <footer :class="s.footer">
+    <footer class="footer">
       <span v-if="error" class="error">{{ error }}</span>
 
-      <span v-if="res && res.srcLang !== input.from" :class="s.changeLanguage">
+      <span v-if="res && res.srcLang !== input.from" class="changeLanguage">
         {{ t('translated_from') }}:
         <button @click="input.from = res.srcLang">
           {{ LANGUAGES_ENTRIES.find(([code]) => code === res!.srcLang)![1] }}
         </button>
       </span>
 
-      <button class="iconBtn" :title="t('settings')" @click="openSettings">
+      <button class="icon-btn" :title="t('settings')" @click="openSettings">
         <SettingsIcon class="icon" />
       </button>
     </footer>
   </main>
 </template>
 
-<style lang="scss" module="s">
+<style lang="scss">
 html,
 body {
-  width: 352px;
+  width: 22rem;
 }
 
 main {
@@ -112,45 +112,39 @@ main {
   margin: var(--s-sm);
 }
 
-/* --------------------------------- shared --------------------------------- */
-.text {
-  flex: 1;
-  margin: 0 var(--s-xs);
-  font-size: 15px;
-  resize: none;
-}
-
-%box {
+/* ------------------------------ input/output ------------------------------ */
+.input {
   display: flex;
   gap: inherit;
-}
-
-/* ---------------------------------- input --------------------------------- */
-.input {
-  @extend %box;
   flex-direction: column-reverse;
   padding: var(--s-xs);
-  height: 128px;
+  height: 8rem;
+
+  .text {
+    flex: 1;
+    margin: 0 var(--s-xs);
+    font-size: 1rem;
+    resize: none;
+  }
 }
 
-/* --------------------------------- output --------------------------------- */
 .output {
-  @extend %box;
+  @extend .input;
   flex-direction: column;
-  min-height: 64px;
-  background: var(--c-bg);
-}
+  height: auto;
+  padding: 0;
 
-.dict {
-  display: grid;
-  gap: var(--s-xs) var(--s-md);
-  grid-template-columns: auto 1fr;
-  margin: var(--s-xs);
-  color: var(--c-fg-alt);
-  font-size: 14px;
+  .dict {
+    display: grid;
+    gap: var(--s-sm) var(--s-md);
+    grid-template-columns: auto 1fr;
+    margin: var(--s-xs);
+    color: var(--c-fg-alt);
+    font-size: 0.875rem;
 
-  .pos {
-    font-weight: 600;
+    .pos {
+      font-weight: 600;
+    }
   }
 }
 
@@ -159,15 +153,16 @@ main {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  font-size: 12px;
+  font-size: 0.75rem;
 
-  :global(.iconBtn) {
+  .icon-btn {
     margin-left: auto;
   }
 
   .changeLanguage {
     text-transform: capitalize;
     color: var(--c-fg-alt);
+    margin-left: var(--s-xs);
 
     button {
       color: var(--c-accent);
