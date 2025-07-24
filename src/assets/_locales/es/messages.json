@@ -65,6 +65,25 @@
   "config_settings_start_with_selection_description": {
     "message": "Al abrir el traductor en la barra de herramientas, comenzar con el texto seleccionado si hay"
   },
+  "error_translate": {
+    "message": "Error al traducir: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "error_play_audio": {
+    "message": "Error al reproducir el audio: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "error_cause_unknown": {
+    "message": "Error desconocido"
+  },
   "lang_af": {
     "message": "Afrikáans"
   },

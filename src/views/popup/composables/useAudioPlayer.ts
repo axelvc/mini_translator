@@ -1,3 +1,4 @@
+import { useI18n } from '@/shared/composables/useI18n'
 import { useEventBus } from '@vueuse/core'
 import { readonly, ref } from 'vue'
 
@@ -12,6 +13,7 @@ async function audioRequest(text: string, lang: string): Promise<Blob> {
 
 export function useAudioPlayer() {
   const audio = new Audio()
+  const { t } = useI18n()
   const bus = useEventBus('audio')
   const playing = ref(false)
   const lastText = ref('')
@@ -45,8 +47,8 @@ export function useAudioPlayer() {
 
       await audio.play()
     } catch (e) {
-      const message = e instanceof Error ? e.message : 'Unknown error'
-      error.value = `Failed to play audio: ${message}`
+      const message = e instanceof Error ? e.message : t('error_cause_unknown')
+      error.value = t('error_play_audio', message)
       playing.value = false
     }
   }

@@ -65,6 +65,25 @@
   "config_settings_start_with_selection_description": {
     "message": "When opening the translator in the toolbar, start with the selected text if there is any"
   },
+  "error_translate": {
+    "message": "Failed to translate: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "error_play_audio": {
+    "message": "Failed to play audio: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1"
+      }
+    }
+  },
+  "error_cause_unknown": {
+    "message": "Unknown error"
+  },
   "lang_af": {
     "message": "Afrikaans"
   },

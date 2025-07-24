@@ -21,7 +21,7 @@ async function cleanBuild() {
     await stubFiles()
     await makeManifest({ version: 2 })
 
-    chokidar.watch(`${root}/**/*.html`).on('change', stubFiles)
+    chokidar.watch([`${root}/**/*.html`, `${root}/assets`]).on('change', stubFiles)
     chokidar.watch('./scripts/makeManifest.ts').on('change', () => makeManifest({ version: 2 }))
 
     return
