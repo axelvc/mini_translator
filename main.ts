@@ -2,11 +2,10 @@ import fs from 'fs-extra'
 import ora from 'ora'
 import chokidar from 'chokidar'
 import { globby } from 'globby'
-import config, { isDev, outDir, root } from './vite.config'
-import stubHtml from './scripts/stubHtml'
+import { isDev, outDir, root } from './vite.config'
+import stubFiles from './scripts/stubHtml'
 import makeManifest from './scripts/makeManifest'
 import makeZip from './scripts/makeZip'
-import { build } from 'vite'
 
 async function cleanBuild() {
   const files = await globby(`${outDir}/*`, {
@@ -19,11 +18,10 @@ async function cleanBuild() {
 
 ;(async () => {
   if (isDev) {
-    await build(config)
-    await stubHtml()
-    chokidar.watch(`${root}/**/*.html`).on('change', stubHtml)
-
+    await stubFiles()
     await makeManifest({ version: 2 })
+
+    chokidar.watch(`${root}/**/*.html`).on('change', stubFiles)
     chokidar.watch('./scripts/makeManifest.ts').on('change', () => makeManifest({ version: 2 }))
 
     return

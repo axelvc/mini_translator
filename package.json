@@ -6,12 +6,12 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development concurrently 'pnpm run dev:web' 'pnpm run dev:main'",
+    "dev": "concurrently 'pnpm run dev:web' 'pnpm run dev:main'",
     "dev:web": "vite",
     "dev:main": "tsx main.ts",
-    "build": "NODE_ENV=production concurrently 'pnpm run build:*'",
-    "build:web": "vue-tsc --noEmit && vite build",
-    "build:main": "tsx main.ts",
+    "build": "pnpm run build:web && pnpm run build:main",
+    "build:web": "NODE_ENV=production vue-tsc --noEmit && vite build",
+    "build:main": "NODE_ENV=production tsx main.ts",
     "lint": "lint-staged"
   },
   "pre-commit": "lint",

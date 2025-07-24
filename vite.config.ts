@@ -20,7 +20,6 @@ export default defineConfig({
   },
   define: {
     __DEV__: isDev,
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
   },
   plugins: [
     vue(),
@@ -46,16 +45,16 @@ export default defineConfig({
   },
   build: {
     outDir,
-    emptyOutDir: !isDev,
-    watch: isDev ? {} : null,
+    emptyOutDir: true,
+    sourcemap: isDev ? 'inline' : false,
     rollupOptions: {
       input: {
         popup: resolve(root, 'views/popup/index.html'),
         options: resolve(root, 'views/options/index.html'),
       },
       output: {
-        assetFileNames: '[name]/style.css',
-        entryFileNames: '[name]/main.js',
+        assetFileNames: 'views/[name]/style.css',
+        entryFileNames: 'views/[name]/main.js',
       },
     },
   },

@@ -2,7 +2,20 @@ import fs from 'fs-extra'
 import { resolve } from 'path'
 import { outDir, port, root } from '../vite.config'
 
-export default async function stubHtml() {
+async function stubAssets() {
+  const inputs = ['icons', '_locales']
+
+  await Promise.all(
+    inputs.map(async (name) => {
+      const outPath = resolve(outDir, name)
+
+      await fs.ensureDir(outPath)
+      await fs.copy(resolve(root, 'assets', name), outPath)
+    }),
+  )
+}
+
+async function stubHtml() {
   const inputs = ['views/popup', 'views/options']
 
   await Promise.all(
@@ -19,4 +32,8 @@ export default async function stubHtml() {
       await fs.writeFile(resolve(outPath, 'index.html'), parsedHtml)
     }),
   )
+}
+
+export default async function stubFiles() {
+  return Promise.all([stubAssets(), stubHtml()])
 }
