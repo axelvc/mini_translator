@@ -25,7 +25,7 @@ function openSettings() {
 
 async function handleTranslate() {
   await translate(input.text, input.from, input.to)
-  input.to = res.value?.outLang ?? ''
+  input.to = res.value?.lang.out ?? ''
 }
 
 watch(() => [input.from, input.to], handleTranslate)
@@ -58,7 +58,7 @@ watchOnce(loaded, async () => {
         v-model:lang="input.from"
         :lang-title="t('select_from_language')"
         :text="input.text"
-        :voice-lang="res?.srcLang"
+        :voice-lang="res?.lang.src"
         :languages="[['auto', t('select_from_language_option_auto')], ...LANGUAGES_ENTRIES]"
       />
     </div>
@@ -86,10 +86,10 @@ watchOnce(loaded, async () => {
     <footer class="footer">
       <span v-if="error" class="error">{{ error }}</span>
 
-      <span v-if="res && res.srcLang !== input.from" class="changeLanguage">
+      <span v-if="res && res.lang.src !== input.from" class="changeLanguage">
         {{ t('translated_from') }}:
-        <button @click="input.from = res.srcLang">
-          {{ LANGUAGES_ENTRIES.find(([code]) => code === res!.srcLang)![1] }}
+        <button @click="input.from = res.lang.src">
+          {{ LANGUAGES_ENTRIES.find(([code]) => code === res!.lang.src)![1] }}
         </button>
       </span>
 

@@ -7,22 +7,14 @@ export interface TranslateData {
 
 export interface TranslateResponse {
   text: string
-  srcLang: string
-  outLang: string
+  lang: {
+    src: string
+    out: string
+  }
   dict?: {
     pos: string
     terms: string[]
   }[]
 }
 
-export class TranslateError extends Error {
-  constructor(message: string) {
-    super(`Server Error: ${message || 'Unknown Error'}`)
-
-    this.name = 'TranslateError'
-  }
-}
-
-export interface Translator {
-  translate(data: TranslateData): Promise<TranslateResponse>
-}
+export type TranslateFn = (data: TranslateData) => Promise<TranslateResponse>
