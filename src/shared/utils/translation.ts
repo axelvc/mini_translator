@@ -1,4 +1,4 @@
-import { TranslateData, TranslateResponse, AudioUrlData, TranslateError, Translator } from '@/shared/types/translation'
+import { TranslateData, TranslateResponse, TranslateError, Translator } from '@/shared/types/translation'
 
 export class GoogleTranslator implements Translator {
   async translate({ text, from, to, alternative }: TranslateData): Promise<TranslateResponse> {
@@ -9,20 +9,6 @@ export class GoogleTranslator implements Translator {
     }
 
     return translation
-  }
-
-  async audio(data: AudioUrlData): Promise<string> {
-    const audio = await this.audioRequest(data)
-
-    return new Promise((resolve) => {
-      const reader = new FileReader()
-
-      reader.onload = () => {
-        resolve(reader.result as string)
-      }
-
-      reader.readAsDataURL(audio)
-    })
   }
 
   private async request({ from, text, to }: TranslateData): Promise<TranslateResponse> {
@@ -42,18 +28,5 @@ export class GoogleTranslator implements Translator {
       srcLang: json.ld_result?.srclangs[0] || json.src,
       outLang: to,
     }
-  }
-
-  private async audioRequest({ text, lang }: AudioUrlData): Promise<Blob> {
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&total=1&idx=0&textlen=${text.length}&client=tw-ob`
-
-    const res = await fetch(audioUrl)
-
-    if (!res.ok) {
-      throw new TranslateError(res.statusText)
-    }
-
-    const blob = await res.blob()
-    return blob
   }
 }

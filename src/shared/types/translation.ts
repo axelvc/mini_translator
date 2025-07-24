@@ -15,11 +15,6 @@ export interface TranslateResponse {
   }[]
 }
 
-export interface AudioUrlData {
-  text: string
-  lang: string
-}
-
 export class TranslateError extends Error {
   constructor(message: string) {
     super(`Server Error: ${message || 'Unknown Error'}`)
@@ -30,5 +25,4 @@ export class TranslateError extends Error {
 
 export interface Translator {
   translate(data: TranslateData): Promise<TranslateResponse>
-  audio(data: AudioUrlData): Promise<string>
 }

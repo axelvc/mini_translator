@@ -52,15 +52,9 @@ export function useTranslator() {
     }
   }
 
-  async function getAudio(text: string, lang: string) {
-    text = text.trim()
-    return translator.audio({ text, lang })
-  }
-
   return {
     error: error,
     res: readonly(res),
     translate,
-    getAudio,
   }
 }

@@ -1,13 +1,21 @@
 import { useEventBus } from '@vueuse/core'
 import { readonly, ref } from 'vue'
-import { useTranslator } from './useTranslator'
+
+async function audioRequest(text: string, lang: string): Promise<Blob> {
+  const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&total=1&idx=0&textlen=${text.length}&client=tw-ob`
+  const res = await fetch(audioUrl)
+
+  if (!res.ok) throw new Error(res.statusText)
+
+  return res.blob()
+}
 
 export function useAudioPlayer() {
   const audio = new Audio()
   const bus = useEventBus('audio')
   const playing = ref(false)
   const lastText = ref('')
-  const { getAudio, error } = useTranslator()
+  const error = ref('')
 
   audio.addEventListener('ended', stop)
   bus.on(stop)
@@ -23,19 +31,30 @@ export function useAudioPlayer() {
   async function play(text: string, lang: string) {
     bus.emit()
 
-    if (!audio.src || lastText.value !== text) {
-      audio.src = await getAudio(text, lang)
-      lastText.value = text
-    }
-
+    error.value = ''
     playing.value = true
-    audio.play()
+
+    try {
+      if (lastText.value !== text) {
+        if (audio.src.startsWith('blob:')) URL.revokeObjectURL(audio.src)
+
+        const audioBlob = await audioRequest(text, lang)
+        audio.src = URL.createObjectURL(audioBlob)
+        lastText.value = text
+      }
+
+      await audio.play()
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unknown error'
+      error.value = `Failed to play audio: ${message}`
+      playing.value = false
+    }
   }
 
   return {
     playing: readonly(playing),
+    error: readonly(error),
     play,
     stop,
-    error,
   }
 }
