@@ -146,7 +146,7 @@ section {
     bottom: 0;
     left: 0;
     width: 0.375rem;
-    background: var(--c-input-alt);
+    background: var(--color-surface-1);
     border-radius: 9em;
   }
 }
@@ -163,11 +163,11 @@ section {
   .name {
     font-weight: 600;
     font-size: 0.875rem;
-    color: var(--c-fg);
+    color: var(--color-text);
   }
 
   .description {
-    color: var(--c-fg-alt);
+    color: var(--color-subtext);
     font-size: 0.875rem;
     text-wrap: pretty;
   }
@@ -188,7 +188,7 @@ section {
     top: calc(50% - 0.5em);
     right: var(--s-sm);
     pointer-events: none;
-    color: var(--c-input);
+    color: var(--color-subtext-1);
   }
 }
 
@@ -206,7 +206,7 @@ section {
     }
 
     &:checked + .switch {
-      background-color: var(--c-accent);
+      background-color: var(--color-accent);
 
       span {
         transform: scale(0.8) translateX(80%);
@@ -220,14 +220,14 @@ section {
     width: 2.5rem;
     height: 1.5rem;
     border-radius: 9em;
-    background: var(--c-input-alt);
+    background: var(--color-surface-1);
     cursor: pointer;
     outline-offset: 2px;
 
     span {
       width: 1.5rem;
       height: 1.5rem;
-      background: var(--c-bg-alt);
+      background: var(--color-surface);
       border-radius: inherit;
       transform: scale(0.8);
       transition: transform 200ms ease-out;
@@ -253,7 +253,7 @@ section {
     right: var(--s-sm);
     padding: var(--s-xs) var(--s-sm);
     border-radius: var(--rounded-sm);
-    background: var(--c-accent);
+    background: var(--color-accent);
     outline-offset: 0.125rem;
     font-weight: 600;
     font-size: 0.75rem;

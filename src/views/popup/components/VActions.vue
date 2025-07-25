@@ -103,7 +103,7 @@ whenever(error, () => {
 .lang {
   height: 1.5rem;
   margin-right: auto;
-  color: var(--c-fg-alt);
+  color: var(--color-subtext);
   background: inherit;
   border-radius: var(--rounded-sm);
   font-size: 0.875rem;
@@ -112,8 +112,8 @@ whenever(error, () => {
   user-select: none;
 
   option {
-    background: var(--c-bg-alt);
-    color: var(--c-fg);
+    background: var(--color-surface);
+    color: var(--color-text);
   }
 }
 
@@ -125,9 +125,9 @@ whenever(error, () => {
     top: 100%;
     padding: var(--s-xs) var(--s-sm);
     margin: var(--s-xs);
-    color: var(--c-fg);
-    background: var(--c-bg-alt);
-    border: 1px solid var(--c-input);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-subtext-1);
     border-radius: var(--rounded-sm);
     font-size: 0.875rem;
     white-space: nowrap;
@@ -140,7 +140,7 @@ whenever(error, () => {
 
   &.active {
     svg {
-      color: var(--c-fg);
+      color: var(--color-text);
     }
   }
 

@@ -1,23 +1,23 @@
 @mixin light-theme {
-  --c-fg: #29303d;
-  --c-fg-alt: #59667f;
-  --c-bg: #f4f6fb;
-  --c-bg-alt: #ffffff;
-  --c-input: #a3b1cc;
-  --c-input-alt: #dfe3ed;
-  --c-accent: #4488ff;
-  --c-error: #ef233c;
+  --color-text: #29303d;
+  --color-subtext: #59667f;
+  --color-subtext-1: #a3b1cc;
+  --color-base: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-1: #dfe3ed;
+  --color-accent: #4488ff;
+  --color-error: #ef233c;
 }
 
 @mixin dark-theme {
-  --c-fg: #f4f7fa;
-  --c-fg-alt: #8f96ac;
-  --c-bg: #171923;
-  --c-bg-alt: #20222c;
-  --c-input: #4d5266;
-  --c-input-alt: #2b2e3b;
-  --c-accent: #4488ff;
-  --c-error: #be0e23;
+  --color-text: #f4f7fa;
+  --color-subtext: #8f96ac;
+  --color-subtext-1: #4d5266;
+  --color-base: #171923;
+  --color-surface: #20222c;
+  --color-surface-1: #2b2e3b;
+  --color-accent: #4488ff;
+  --color-error: #be0e23;
 }
 
 :root {
@@ -31,7 +31,7 @@
   --rounded: 8px;
   --rounded-sm: 4px;
 
-  --outline: 2px solid var(--c-accent);
+  --outline: 2px solid var(--color-accent);
 
   @media (prefers-color-scheme: light) {
     @include light-theme;
@@ -51,20 +51,20 @@
 }
 
 ::selection {
-  background: var(--c-fg-alt);
-  color: var(--c-bg);
+  background: var(--color-subtext);
+  color: var(--color-base);
 }
 
 ::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
-  background: var(--c-input-alt);
+  background: var(--color-surface-1);
 
   &-thumb {
-    background: var(--c-input);
+    background: var(--color-subtext-1);
 
     &:active {
-      background: var(--c-fg-alt);
+      background: var(--color-subtext);
     }
   }
 }
@@ -73,7 +73,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  scrollbar-color: var(--c-input) var(--c-input-alt);
+  scrollbar-color: var(--color-subtext-1) var(--color-surface-1);
   scrollbar-width: thin;
 
   &:focus-visible,
@@ -88,8 +88,8 @@
 }
 
 body {
-  color: var(--c-fg);
-  background: var(--c-bg);
+  color: var(--color-text);
+  background: var(--color-base);
   font-family: 'Inter', system-ui, sans-serif;
 }
 
@@ -104,7 +104,7 @@ select {
 }
 
 :is(input, textarea)::placeholder {
-  color: var(--c-input);
+  color: var(--color-subtext-1);
   user-select: none;
 }
 
@@ -113,8 +113,8 @@ select {
 }
 
 .input {
-  background: var(--c-bg-alt);
-  border: 1px solid var(--c-input-alt);
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-1);
   border-radius: var(--rounded);
 }
 
@@ -127,19 +127,19 @@ select {
   place-items: center;
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--c-input);
+  color: var(--color-subtext-1);
   border-radius: var(--rounded-sm);
   font-size: 20px;
   transition: color 0.2s ease-in-out;
 
   &:hover:enabled {
-    color: var(--c-accent);
+    color: var(--color-accent);
   }
 }
 
 .error {
   padding: var(--s-xs) var(--s-xs);
   color: #fff;
-  background: var(--c-error);
+  background: var(--color-error);
   border-radius: var(--rounded-sm);
 }

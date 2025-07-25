@@ -131,7 +131,7 @@ main {
     gap: var(--s-sm) var(--s-md);
     grid-template-columns: auto 1fr;
     margin: var(--s-xs);
-    color: var(--c-fg-alt);
+    color: var(--color-subtext);
     font-size: 0.875rem;
 
     .pos {
@@ -153,11 +153,11 @@ main {
 
   .changeLanguage {
     text-transform: capitalize;
-    color: var(--c-fg-alt);
+    color: var(--color-subtext);
     margin-left: var(--s-xs);
 
     button {
-      color: var(--c-accent);
+      color: var(--color-accent);
     }
   }
 }
