@@ -28,7 +28,6 @@ export function useTranslator() {
     } catch (e) {
       const message = e instanceof Error ? e.message : t('error_cause_unknown')
       error.value = t('error_translate', message)
-      console.log({ message, error: error.value })
       res.value = null
     }
   }

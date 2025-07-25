@@ -26,7 +26,6 @@ async function load() {
 }
 
 async function save(newSettings = settings) {
-  console.log('asd')
   await storage.set({ settings: newSettings })
   Object.assign(settings, newSettings)
 }
