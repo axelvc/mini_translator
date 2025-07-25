@@ -59,6 +59,15 @@
   "config_settings_theme_option_light": {
     "message": "Claro"
   },
+  "config_settings_theme_option_custom": {
+    "message": "Personalizado"
+  },
+  "config_settings_custom_theme": {
+    "message": "Tema personalizado"
+  },
+  "config_settings_custom_theme_description": {
+    "message": "Actualiza las variables CSS con tus propios colores personalizados"
+  },
   "config_settings_start_with_selection": {
     "message": "Comenzar con la selección"
   },

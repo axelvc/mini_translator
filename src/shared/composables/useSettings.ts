@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS = {
   toolbar_delay: 500,
   theme: 'system',
   start_with_selection: true,
+  custom_theme: '',
 }
 
 const storage = browser.storage.sync
@@ -25,6 +26,7 @@ async function load() {
 }
 
 async function save(newSettings = settings) {
+  console.log('asd')
   await storage.set({ settings: newSettings })
   Object.assign(settings, newSettings)
 }

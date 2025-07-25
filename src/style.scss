@@ -16,6 +16,7 @@
   --c-bg-alt: #20222c;
   --c-input: #4d5266;
   --c-input-alt: #2b2e3b;
+  --c-accent: #4488ff;
   --c-error: #be0e23;
 }
 
@@ -32,7 +33,9 @@
 
   --outline: 2px solid var(--c-accent);
 
-  @include light-theme;
+  @media (prefers-color-scheme: light) {
+    @include light-theme;
+  }
 
   @media (prefers-color-scheme: dark) {
     @include dark-theme;
@@ -74,7 +77,8 @@
   scrollbar-width: thin;
 
   &:focus-visible,
-  .outline {
+  .outline,
+  .outline-box:has(:is(input, textarea):focus-visible) {
     outline: var(--outline);
   }
 

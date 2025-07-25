@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { watch } from 'vue'
-import { clamp } from '@vueuse/core'
+import { clamp, whenever } from '@vueuse/core'
 
 import ChevronDownIcon from '@/shared/components/icons/ChevronDownIcon.svg'
-import { SettingId, useSettings } from '@/shared/composables/useSettings'
+import { SettingId, Settings, useSettings } from '@/shared/composables/useSettings'
 import { settingsDefinition } from './settings.definition'
 import { useI18n } from '@/shared/composables/useI18n'
 import { useTheme } from '@/shared/composables/useTheme'
@@ -12,7 +12,11 @@ const { t } = useI18n()
 const { settings, save, loaded } = useSettings()
 
 useTheme()
-watch(settings, save)
+whenever(loaded, () => watch(settings, save))
+
+function set<K extends SettingId>(id: K, value: Settings[K]) {
+  settings[id] = value
+}
 
 function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; max?: number; id: SettingId }) {
   const target = ev.target as HTMLInputElement
@@ -20,7 +24,7 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 
   min ??= n
   max ??= Math.max(n, min)
-  ;(settings as any)[id] = clamp(n, min, max)
+  set(id, clamp(n, min, max))
 }
 </script>
 <template>
@@ -31,41 +35,50 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
       <h2>{{ category.label }}</h2>
 
       <div class="list">
-        <label v-for="option in category.settings" :key="option.id" class="option">
-          <div>
-            <span class="name">{{ option.label }}</span>
-            <p v-if="'description' in option" class="description">
-              {{ option.description }}
-            </p>
-          </div>
+        <template v-for="option in category.settings" :key="option.id">
+          <label v-if="(option as any).condition?.(settings) ?? true" class="option">
+            <div>
+              <span class="name">{{ option.label }}</span>
+              <p v-if="'description' in option" class="description">
+                {{ option.description }}
+              </p>
+            </div>
 
-          <div v-if="option.type === 'select'" class="select">
-            <select v-model="settings[option.id]" class="input">
-              <option v-for="[value, name] in option.options" :key="value.toString()" :value="value">
-                {{ name }}
-              </option>
-            </select>
+            <div v-if="option.type === 'select'" class="select">
+              <select v-model="settings[option.id]" class="input">
+                <option v-for="[value, name] in option.options" :key="value.toString()" :value="value">
+                  {{ name }}
+                </option>
+              </select>
 
-            <ChevronDownIcon class="icon" />
-          </div>
+              <ChevronDownIcon class="icon" />
+            </div>
 
-          <div v-else-if="option.type === 'boolean'" class="boolean">
-            <input ref="input" v-model="settings[option.id]" type="checkbox" class="no-outline" />
+            <div v-else-if="option.type === 'boolean'" class="boolean">
+              <input ref="input" v-model="settings[option.id]" type="checkbox" class="no-outline" />
 
-            <span class="switch">
-              <span />
-            </span>
-          </div>
+              <span class="switch">
+                <span />
+              </span>
+            </div>
 
-          <input
-            v-else-if="option.type === 'number'"
-            class="input"
-            type="number"
-            :value="settings[option.id]"
-            :min="option.min"
-            @change="handleInputNumberChange($event, option)"
-          />
-        </label>
+            <input
+              v-else-if="option.type === 'number'"
+              class="input"
+              type="number"
+              :value="settings[option.id]"
+              :min="option.min"
+              @change="handleInputNumberChange($event, option)"
+            />
+
+            <div v-if="option.type === 'multi-text'" class="multi-text">
+              <div class="input multi-text outline-box">
+                <textarea v-model.lazy="settings[option.id]" class="no-outline">{{ option.defaultValue }}</textarea>
+                <button class="reset" @click="set(option.id, option.defaultValue)">Reset</button>
+              </div>
+            </div>
+          </label>
+        </template>
       </div>
     </section>
   </main>
@@ -218,6 +231,38 @@ section {
       border-radius: inherit;
       transform: scale(0.8);
       transition: transform 200ms ease-out;
+    }
+  }
+}
+
+.multi-text {
+  position: relative;
+  display: grid;
+  gap: var(--s-sm);
+
+  textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 10rem;
+    resize: vertical;
+  }
+
+  .reset {
+    position: absolute;
+    top: var(--s-sm);
+    right: var(--s-sm);
+    padding: var(--s-xs) var(--s-sm);
+    border-radius: var(--rounded-sm);
+    background: var(--c-accent);
+    outline-offset: 0.125rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    opacity: 0.4;
+    transition: opacity 200ms ease-in-out;
+
+    &:hover,
+    &:focus-visible {
+      opacity: 1;
     }
   }
 }

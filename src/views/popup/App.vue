@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { debouncedWatch, watchOnce } from '@vueuse/core'
 import browser from 'webextension-polyfill'
 
@@ -12,7 +12,6 @@ import { useTheme } from '@/shared/composables/useTheme'
 import { useTranslator } from './composables/useTranslator'
 
 const input = reactive({ text: '', from: 'auto', to: '' })
-const inputFocus = ref(false)
 const { error, res, translate } = useTranslator()
 const { settings, loaded } = useSettings()
 const { t } = useI18n()
@@ -44,15 +43,8 @@ watchOnce(loaded, async () => {
 
 <template>
   <main>
-    <div :class="['input', inputFocus && 'outline']">
-      <textarea
-        v-model="input.text"
-        autofocus
-        class="no-outline text"
-        :placeholder="t('popup_type_placeholder')"
-        @focus="inputFocus = true"
-        @blur="inputFocus = false"
-      />
+    <div class="input outline-box">
+      <textarea v-model="input.text" autofocus class="no-outline text" :placeholder="t('popup_type_placeholder')" />
 
       <VActions
         v-model:lang="input.from"

@@ -59,6 +59,15 @@
   "config_settings_theme_option_light": {
     "message": "Light"
   },
+  "config_settings_theme_option_custom": {
+    "message": "Custom"
+  },
+  "config_settings_custom_theme": {
+    "message": "Custom theme"
+  },
+  "config_settings_custom_theme_description": {
+    "message": "Update the CSS variables with your own custom colors"
+  },
   "config_settings_start_with_selection": {
     "message": "Start with selection"
   },

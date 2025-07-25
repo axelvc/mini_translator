@@ -38,6 +38,7 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'off',
       'promise/always-return': 'off',
       'no-empty': 'off',
+      'vue/no-textarea-mustache': 'off'
     },
   },
 ])
