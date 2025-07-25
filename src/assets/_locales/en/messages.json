@@ -90,6 +90,12 @@
       }
     }
   },
+  "support_card_title": {
+    "message": "Find Mini Translator useful?"
+  },
+  "support_card_desc": {
+    "message": "Hi there! I'm the one-person team behind Mini Translator. I built it in my spare time to make translation easier for everyone. Your support would mean a lot and helps me dedicate more time to the project."
+  },
   "error_cause_unknown": {
     "message": "Unknown error"
   },

@@ -93,6 +93,12 @@
   "error_cause_unknown": {
     "message": "Error desconocido"
   },
+  "support_card_title": {
+    "message": "¿Encuentras Mini Translator útil?"
+  },
+  "support_card_desc": {
+    "message": "¡Hola! Soy la única persona detrás de Mini Translator. Fue construido en mi tiempo libre para facilitar la traducción para todos. Tu apoyo significa mucho y ayuda a dedicar más tiempo al proyecto."
+  },
   "lang_af": {
     "message": "Afrikáans"
   },

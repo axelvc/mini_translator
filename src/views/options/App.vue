@@ -28,74 +28,104 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 }
 </script>
 <template>
-  <main v-if="loaded">
-    <h1>{{ t('settings') }}</h1>
+  <div class="settings-layout">
+    <main v-if="loaded">
+      <h1>{{ t('settings') }}</h1>
 
-    <section v-for="category in settingsDefinition" :key="category.id">
-      <h2>{{ category.label }}</h2>
+      <section v-for="category in settingsDefinition" :key="category.id">
+        <h2>{{ category.label }}</h2>
 
-      <div class="list">
-        <template v-for="option in category.settings" :key="option.id">
-          <label v-if="(option as any).condition?.(settings) ?? true" class="option">
-            <div>
-              <span class="name">{{ option.label }}</span>
-              <p v-if="'description' in option" class="description">
-                {{ option.description }}
-              </p>
-            </div>
-
-            <div v-if="option.type === 'select'" class="select">
-              <select v-model="settings[option.id]" class="input">
-                <option v-for="[value, name] in option.options" :key="value.toString()" :value="value">
-                  {{ name }}
-                </option>
-              </select>
-
-              <ChevronDownIcon class="icon" />
-            </div>
-
-            <div v-else-if="option.type === 'boolean'" class="boolean">
-              <input ref="input" v-model="settings[option.id]" type="checkbox" class="no-outline" />
-
-              <span class="switch">
-                <span />
-              </span>
-            </div>
-
-            <input
-              v-else-if="option.type === 'number'"
-              class="input"
-              type="number"
-              :value="settings[option.id]"
-              :min="option.min"
-              @change="handleInputNumberChange($event, option)"
-            />
-
-            <div v-if="option.type === 'multi-text'" class="multi-text">
-              <div class="input multi-text outline-box">
-                <textarea
-                  :placeholder="option.defaultValue"
-                  :value="settings[option.id] ?? option.defaultValue"
-                  class="no-outline"
-                  @change="set(option.id, ($event.target as HTMLTextAreaElement).value)"
-                />
-                <button class="reset" @click="set(option.id, option.defaultValue)">Reset</button>
+        <div class="list">
+          <template v-for="option in category.settings" :key="option.id">
+            <label v-if="(option as any).condition?.(settings) ?? true" class="option">
+              <div>
+                <span class="name">{{ option.label }}</span>
+                <p v-if="'description' in option" class="description">
+                  {{ option.description }}
+                </p>
               </div>
-            </div>
-          </label>
-        </template>
+
+              <div v-if="option.type === 'select'" class="select">
+                <select v-model="settings[option.id]" class="input">
+                  <option v-for="[value, name] in option.options" :key="value.toString()" :value="value">
+                    {{ name }}
+                  </option>
+                </select>
+
+                <ChevronDownIcon class="icon" />
+              </div>
+
+              <div v-else-if="option.type === 'boolean'" class="boolean">
+                <input ref="input" v-model="settings[option.id]" type="checkbox" class="no-outline" />
+
+                <span class="switch">
+                  <span />
+                </span>
+              </div>
+
+              <input
+                v-else-if="option.type === 'number'"
+                class="input"
+                type="number"
+                :value="settings[option.id]"
+                :min="option.min"
+                @change="handleInputNumberChange($event, option)"
+              />
+
+              <div v-if="option.type === 'multi-text'" class="multi-text">
+                <div class="input multi-text outline-box">
+                  <textarea
+                    :placeholder="option.defaultValue"
+                    :value="settings[option.id] ?? option.defaultValue"
+                    class="no-outline"
+                    @change="set(option.id, ($event.target as HTMLTextAreaElement).value)"
+                  />
+                  <button class="reset" @click="set(option.id, option.defaultValue)">Reset</button>
+                </div>
+              </div>
+            </label>
+          </template>
+        </div>
+      </section>
+    </main>
+
+    <aside class="donation-aside">
+      <div class="donation-card">
+        <h3 class="donation-title">
+          {{ t('support_card_title') }}
+        </h3>
+        <p class="donation-desc">
+          {{ t('support_card_desc') }}
+        </p>
+        <div class="donation-buttons">
+          <a href="https://buymeacoffee.com/axelvc" target="_blank" class="buymeacoffee">Buymeacoffee</a>
+          <a href="https://ko-fi.com/axelvc" target="_blank" class="kofi">Ko-fi</a>
+          <a href="https://donate.stripe.com/3cIaEWdOva2fcZH1UmdAk00" target="_blank" class="stripe">Stripe</a>
+        </div>
       </div>
-    </section>
-  </main>
+    </aside>
+  </div>
 </template>
 
 <style lang="scss">
+.settings-layout {
+  display: flex;
+  align-content: flex-start;
+  justify-content: space-between;
+  gap: var(--s-xl);
+  flex-wrap: wrap;
+  padding-block: var(--s-xl);
+  margin-inline: min(8rem, 10vw);
+  min-height: 100vh;
+}
+
 main {
   display: grid;
   gap: var(--s-xl);
-  margin: 3rem 8rem;
+  margin-right: 0;
   max-width: 25rem;
   font-size: 1rem;
+  align-content: flex-start;
 }
 
 h1 {
@@ -259,6 +289,7 @@ section {
     padding: var(--s-xs) var(--s-sm);
     border-radius: var(--rounded-sm);
     background: var(--color-accent);
+    color: var(--color-base);
     outline-offset: 0.125rem;
     font-weight: 600;
     font-size: 0.75rem;
@@ -268,6 +299,81 @@ section {
     &:hover,
     &:focus-visible {
       opacity: 1;
+    }
+  }
+}
+
+.donation-aside {
+  @media (min-width: 1040px) {
+    position: fixed;
+    bottom: var(--s-lg);
+    right: var(--s-lg);
+  }
+}
+
+.donation-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  max-width: 25rem;
+  border-radius: 1rem;
+  background: var(--color-surface);
+  box-shadow: 0 0 2px var(--color-surface-1);
+  font-size: 0.75rem;
+}
+
+.donation-title {
+  font-size: 1em;
+}
+
+.donation-desc {
+  margin: var(--s-sm) 0 var(--s-lg);
+  color: var(--color-subtext);
+}
+
+.donation-buttons {
+  display: flex;
+  gap: var(--s-sm);
+  width: 100%;
+
+  a {
+    border-radius: var(--rounded-sm);
+    padding: 0.5em 0.75em;
+    outline-offset: 2px;
+    font-weight: 600;
+    transition: all ease-in 100ms;
+  }
+
+  .buymeacoffee {
+    background: #fffbe6;
+    color: #6f4e37;
+
+    &:hover,
+    &:focus-visible {
+      color: #0d0c23;
+      background: #ffdd01;
+    }
+  }
+
+  .kofi {
+    background: #eaf6fb;
+    color: #72a5f2;
+
+    &:hover,
+    &:focus-visible {
+      background: #72a5f2;
+      color: #202020;
+    }
+  }
+
+  .stripe {
+    background: #eaf6fb;
+    color: #6673e5;
+
+    &:hover,
+    &:focus-visible {
+      background: #6673e5;
+      color: #eaf6fb;
     }
   }
 }
