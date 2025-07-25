@@ -25,8 +25,9 @@ export function useTranslator() {
         to: toLang,
         alternative: toLang === target ? second : target,
       })
-    } catch (e) {
-      const message = (e as Error)?.message || t('error_cause_unknown')
+    } catch (e: any) {
+      if (e?.name === 'AbortError') return
+      const message = e?.message || t('error_cause_unknown')
       error.value = t('error_translate', message)
       res.value = null
     }

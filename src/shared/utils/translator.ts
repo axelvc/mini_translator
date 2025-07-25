@@ -1,5 +1,7 @@
 import { TranslateData, TranslateResponse, TranslateFn } from '@/shared/types/translation'
 
+let controller: AbortController | null = null
+
 export const translate: TranslateFn = async ({ text, from, to, alternative }) => {
   let translation = await request({ text, from, to })
 
@@ -13,7 +15,9 @@ export const translate: TranslateFn = async ({ text, from, to, alternative }) =>
 async function request({ from, text, to }: TranslateData): Promise<TranslateResponse> {
   const translationUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&dt=bd&dj=1&q=${encodeURIComponent(text)}`
 
-  const res = await fetch(translationUrl)
+  controller?.abort()
+  controller = new AbortController()
+  const res = await fetch(translationUrl, { signal: controller.signal })
 
   if (!res.ok) {
     throw new Error(res.statusText)

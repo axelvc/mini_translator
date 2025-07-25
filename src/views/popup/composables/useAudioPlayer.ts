@@ -2,9 +2,15 @@ import { useI18n } from '@/shared/composables/useI18n'
 import { useEventBus } from '@vueuse/core'
 import { readonly, ref } from 'vue'
 
+let controller: AbortController | null = null
+
 async function audioRequest(text: string, lang: string): Promise<Blob> {
   const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&total=1&idx=0&textlen=${text.length}&client=tw-ob`
-  const res = await fetch(audioUrl)
+
+  controller?.abort()
+  controller = new AbortController()
+
+  const res = await fetch(audioUrl, { signal: controller.signal })
 
   if (!res.ok) throw new Error(res.statusText)
 
@@ -46,8 +52,9 @@ export function useAudioPlayer() {
       }
 
       await audio.play()
-    } catch (e) {
-      const message = (e as Error)?.message || t('error_cause_unknown')
+    } catch (e: any) {
+      if (e?.name === 'AbortError') return
+      const message = e?.message || t('error_cause_unknown')
       error.value = t('error_play_audio', message)
       playing.value = false
     }
