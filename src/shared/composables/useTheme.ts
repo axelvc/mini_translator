@@ -21,7 +21,7 @@ export function useTheme(root = document.documentElement) {
       .forEach((rule) => {
         if (!rule) return
         const [name, value] = rule.split(':')
-        if (!name || !value) return
+        if (!name || !value || !name.startsWith('--')) return
 
         root.style.setProperty(name, value)
       })
