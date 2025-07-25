@@ -22,22 +22,21 @@ function openSettings() {
   browser.runtime.openOptionsPage()
 }
 
-async function handleTranslate() {
-  await translate(input.text, input.from, input.to)
-  input.to = res.value?.lang.out ?? ''
+function getTranslation() {
+  translate(input.text, input.from, input.to)
 }
 
-watch(() => [input.from, input.to], handleTranslate)
+watch(() => [input.from, input.to], getTranslation)
 watchOnce(loaded, async () => {
   if (settings.start_with_selection) {
     try {
       const [text] = await browser.tabs.executeScript(undefined, { code: 'window.getSelection().toString()' })
       input.text = (text as string) || ''
-      handleTranslate()
+      getTranslation()
     } catch {}
   }
 
-  debouncedWatch(() => input.text, handleTranslate, { debounce: settings.toolbar_delay })
+  debouncedWatch(() => input.text, getTranslation, { debounce: settings.toolbar_delay })
 })
 </script>
 
@@ -57,10 +56,11 @@ watchOnce(loaded, async () => {
 
     <div v-if="res" class="output">
       <VActions
-        v-model:lang="input.to"
-        :lang-title="t('select_to_language')"
         :text="res.text"
+        :lang-title="t('select_to_language')"
         :languages="LANGUAGES_ENTRIES"
+        :lang="res.lang.out || input.to"
+        @update:lang="input.to = $event"
       />
 
       <p class="text">
