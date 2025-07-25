@@ -55,7 +55,7 @@ export function useAudioPlayer() {
 
   return {
     playing: readonly(playing),
-    error: readonly(error),
+    error,
     play,
     stop,
   }
