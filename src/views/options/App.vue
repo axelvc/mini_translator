@@ -73,7 +73,12 @@ function handleInputNumberChange(ev: Event, { min, max, id }: { min?: number; ma
 
             <div v-if="option.type === 'multi-text'" class="multi-text">
               <div class="input multi-text outline-box">
-                <textarea v-model.lazy="settings[option.id]" class="no-outline">{{ option.defaultValue }}</textarea>
+                <textarea
+                  :placeholder="option.defaultValue"
+                  :value="settings[option.id] ?? option.defaultValue"
+                  class="no-outline"
+                  @change="set(option.id, ($event.target as HTMLTextAreaElement).value)"
+                />
                 <button class="reset" @click="set(option.id, option.defaultValue)">Reset</button>
               </div>
             </div>
