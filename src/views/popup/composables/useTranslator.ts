@@ -26,7 +26,7 @@ export function useTranslator() {
         alternative: toLang === target ? second : target,
       })
     } catch (e) {
-      const message = e instanceof Error ? e.message : t('error_cause_unknown')
+      const message = (e as Error)?.message || t('error_cause_unknown')
       error.value = t('error_translate', message)
       res.value = null
     }
