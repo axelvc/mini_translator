@@ -16,6 +16,8 @@ const { error, res, translate } = useTranslator()
 const { settings, loaded } = useSettings()
 const { t } = useI18n()
 
+const MANIFEST_VERSION = browser.runtime.getManifest().manifest_version
+
 useTheme()
 
 function openSettings() {
@@ -26,14 +28,32 @@ function getTranslation() {
   translate(input.text, input.from, input.to)
 }
 
+async function getSelection(): Promise<string> {
+  try {
+    if (MANIFEST_VERSION === 3) {
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
+      if (!tab.id) return ''
+
+      const result = await browser.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => window.getSelection()?.toString(),
+      })
+
+      return (result[0]?.result as string) || ''
+    } else {
+      const [text] = await browser.tabs.executeScript(undefined, { code: 'window.getSelection().toString()' })
+      return (text as string) || ''
+    }
+  } catch {
+    return ''
+  }
+}
+
 watch(() => [input.from, input.to], getTranslation)
 watchOnce(loaded, async () => {
   if (settings.start_with_selection) {
-    try {
-      const [text] = await browser.tabs.executeScript(undefined, { code: 'window.getSelection().toString()' })
-      input.text = (text as string) || ''
-      getTranslation()
-    } catch {}
+    input.text = await getSelection()
+    getTranslation()
   }
 
   debouncedWatch(() => input.text, getTranslation, { debounce: settings.toolbar_delay })

@@ -5,7 +5,7 @@ import { isDev, outDir, port } from '../vite.config'
 import pkg from '../package.json'
 
 export default async function makeManifest({ version }: { version: number }) {
-  const permissions = ['storage']
+  const permissions = ['storage', 'scripting', 'activeTab']
   const host_permissions = ['*://*/']
 
   const manifest: Manifest.WebExtensionManifest = {

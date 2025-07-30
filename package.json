@@ -3,7 +3,7 @@
   "type": "module",
   "visualName": "Mini Translator",
   "description": "Translate a text to a different language",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "scripts": {
     "dev": "concurrently 'pnpm run dev:web' 'pnpm run dev:main'",
