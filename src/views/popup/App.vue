@@ -137,6 +137,7 @@ main {
     margin: 0 var(--s-xs);
     font-size: 1rem;
     resize: none;
+    white-space: pre-wrap;
   }
 }
 
