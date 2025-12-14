@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@types/web-bluetooth':
+        specifier: ^0.0.21
+        version: 0.0.21
       '@vueuse/core':
         specifier: ^13.5.0
         version: 13.5.0(vue@3.5.17(typescript@5.8.3))
